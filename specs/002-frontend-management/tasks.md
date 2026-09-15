@@ -8,12 +8,12 @@
 
 **Goal**: a buildable, isolated web project. **Gate**: start no user story before this and Phase 2 pass.
 
-- [ ] T001 Initialize Next.js App Router with TypeScript and `src/` at repository root in `package.json`, `tsconfig.json`, `next.config.ts`, `src/app/layout.tsx` and `src/app/page.tsx`; pin compatible Node/pnpm versions in `package.json`.
-- [ ] T002 Configure Tailwind CSS in `src/app/globals.css` and `postcss.config.mjs`; verify a responsive utility renders in `src/app/page.tsx`.
-- [ ] T003 Install and configure shadcn/ui with local components in `components.json` and `src/components/ui/`; add Button, Input, Field, Card, Dialog and Skeleton only as needed.
-- [ ] T004 Configure ESLint, TypeScript strict typecheck, test runner and build scripts in `package.json`, `eslint.config.mjs` and `tsconfig.json`; make `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` runnable.
-- [ ] T005 Document server-only `NEST_API_URL`, Redis URL/credentials, cookie origin and secret settings in `.env.example` and `README.md`; reject missing production values in `src/lib/config/server-env.ts` without putting secrets in `NEXT_PUBLIC_` variables.
-- [ ] T006 Set up component/unit, BFF integration and E2E test harnesses in `vitest.config.ts`, `tests/setup.ts` and `playwright.config.ts`, with isolated API/Redis test doubles and `test:e2e` script in `package.json`.
+- [x] T001 Initialize Next.js App Router with TypeScript and `src/` at repository root in `package.json`, `tsconfig.json`, `next.config.ts`, `src/app/layout.tsx` and `src/app/page.tsx`; pin compatible Node/pnpm versions in `package.json`.
+- [x] T002 Configure Tailwind CSS in `src/app/globals.css` and `postcss.config.mjs`; verify a responsive utility renders in `src/app/page.tsx`.
+- [x] T003 Install and configure shadcn/ui with local components in `components.json` and `src/components/ui/`; add Button, Input, Field, Card, Dialog and Skeleton only as needed.
+- [x] T004 Configure ESLint, TypeScript strict typecheck, test runner and build scripts in `package.json`, `eslint.config.mjs` and `tsconfig.json`; make `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` runnable.
+- [x] T005 Document server-only `NEST_API_URL`, Redis URL/credentials, cookie origin and secret settings in `.env.example` and `README.md`; reject missing production values in `src/lib/config/server-env.ts` without putting secrets in `NEXT_PUBLIC_` variables.
+- [x] T006 Set up component/unit, BFF integration and E2E test harnesses in `vitest.config.ts`, `tests/setup.ts` and `playwright.config.ts`, with isolated API/Redis test doubles and `test:e2e` script in `package.json`.
 
 ## Phase 2 — Foundation (blocks all stories)
 

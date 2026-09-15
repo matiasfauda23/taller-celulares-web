@@ -48,9 +48,9 @@
 
 **Goal**: four API-backed counts, short reception-ordered list and quick links. **Independent test**: compare all counts to `meta.total`, fail one metric independently and verify links.
 
-- [ ] T026 [US2] Implement four dashboard reads via existing list endpoints with `page=1`, valid limits and `status=READY` filter in `src/features/dashboard/api/get-dashboard.ts`; reuse work-order response for total plus five rows.
-- [ ] T027 [US2] Build cards, reception-date order section and four quick links in `src/features/dashboard/components/dashboard-view.tsx` and `src/app/(private)/dashboard/page.tsx`; never label rows “latest created”.
-- [ ] T028 [US2] Test active/non-archived totals, READY filter, independent metric failure and empty order section in `tests/integration/dashboard.test.ts`.
+- [x] T026 [US2] Implement four dashboard reads via existing list endpoints with `page=1`, valid limits and `status=READY` filter in `src/features/dashboard/api/get-dashboard.ts`; reuse work-order response for total plus five rows.
+- [x] T027 [US2] Build cards, reception-date order section and four quick links in `src/features/dashboard/components/dashboard-view.tsx` and `src/app/(private)/dashboard/page.tsx`; never label rows “latest created”.
+- [x] T028 [US2] Test active/non-archived totals, READY filter, independent metric failure and empty order section in `tests/integration/dashboard.test.ts`.
 
 ## Phase 5 — US3: Clients (H3, RF-05/RF-09)
 

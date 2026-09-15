@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { callNestApi } from "@/lib/api/nest-client";
 import type { MeResponse } from "@/lib/api/types";
@@ -30,10 +31,10 @@ export default async function PrivateLayout({ children }: Readonly<{ children: R
   return (
     <div className="mx-auto flex min-h-screen max-w-4xl flex-col p-4 sm:p-8">
       <header className="mb-6 flex items-center justify-between gap-4 border-b pb-4">
-        <div>
+        <Link href="/dashboard" className="block">
           <p className="text-sm font-medium">{profile?.workshop.name ?? "Workshop"}</p>
           <p className="text-xs text-muted-foreground">{profile?.account.ownerName ?? ""}</p>
-        </div>
+        </Link>
         <LogoutButton />
       </header>
       {children}

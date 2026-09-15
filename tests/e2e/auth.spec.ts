@@ -14,7 +14,7 @@ const credentials = {
 };
 
 test("redirects an unauthenticated visitor away from a protected route", async ({ page }) => {
-  await page.goto("/account");
+  await page.goto("/dashboard");
   await expect(page).toHaveURL(/\/login$/);
 });
 
@@ -30,8 +30,8 @@ test("registers against the real API, stores no tokens in the browser, survives 
   await page.getByLabel("Workshop address").fill(credentials.workshopAddress);
   await page.getByRole("button", { name: "Create account" }).click();
 
-  await expect(page).toHaveURL(/\/account$/);
-  await expect(page.getByRole("heading", { name: "Session active" })).toBeVisible();
+  await expect(page).toHaveURL(/\/dashboard$/);
+  await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
 
   const cookies = await context.cookies();
   const sessionCookie = cookies.find((cookie) => cookie.name === "workshop_session");
@@ -49,19 +49,19 @@ test("registers against the real API, stores no tokens in the browser, survives 
   expect(html).not.toMatch(/eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/); // no JWT-looking string anywhere in the page
 
   await page.reload();
-  await expect(page.getByRole("heading", { name: "Session active" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
 
   // Outlive the 5-second access token configured for this verification run, then navigate
   // again: getFreshSession() must refresh transparently instead of forcing a re-login.
   await page.waitForTimeout(6000);
   await page.reload();
-  await expect(page.getByRole("heading", { name: "Session active" })).toBeVisible();
-  await expect(page).toHaveURL(/\/account$/);
+  await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
+  await expect(page).toHaveURL(/\/dashboard$/);
 
   await page.getByRole("button", { name: "Sign out" }).click();
   await expect(page).toHaveURL(/\/login$/);
 
-  await page.goto("/account");
+  await page.goto("/dashboard");
   await expect(page).toHaveURL(/\/login$/);
 });
 
@@ -71,8 +71,8 @@ test("logs back in against the real API with the already-registered credentials"
   await page.getByLabel("Password").fill(credentials.password);
   await page.getByRole("button", { name: "Sign in" }).click();
 
-  await expect(page).toHaveURL(/\/account$/);
-  await expect(page.getByRole("heading", { name: "Session active" })).toBeVisible();
+  await expect(page).toHaveURL(/\/dashboard$/);
+  await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
 });
 
 test("shows a recoverable error and stays on the login page for invalid credentials", async ({ page }) => {
@@ -92,7 +92,7 @@ test("ends the session when NestJS rejects an already-rotated refresh token", as
   await page.getByLabel("Email").fill(credentials.email);
   await page.getByLabel("Password").fill(credentials.password);
   await page.getByRole("button", { name: "Sign in" }).click();
-  await expect(page).toHaveURL(/\/account$/);
+  await expect(page).toHaveURL(/\/dashboard$/);
 
   const cookies = await context.cookies();
   const sessionCookie = cookies.find((cookie) => cookie.name === "workshop_session");
@@ -127,6 +127,6 @@ test("ends the session when NestJS rejects an already-rotated refresh token", as
     await redis.quit();
   }
 
-  await page.goto("/account");
+  await page.goto("/dashboard");
   await expect(page).toHaveURL(/\/login$/);
 });

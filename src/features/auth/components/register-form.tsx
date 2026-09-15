@@ -35,7 +35,7 @@ export function RegisterForm() {
       return;
     }
 
-    router.push("/account");
+    router.push("/dashboard");
     router.refresh();
   }
 

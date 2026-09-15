@@ -56,12 +56,12 @@
 
 **Goal**: list/detail/create/edit/archive clients. **Independent test**: page through active clients, mutate one, cancel archive, then confirm archive and surface 409 unchanged.
 
-- [ ] T029 [US3] Define create/edit client Zod schemas aligned to NestJS DTOs in `src/features/clients/schemas/client.ts`; test field limits in `tests/unit/client-schema.test.ts`.
-- [ ] T030 [US3] Implement typed list/detail/create/update/archive API functions in `src/features/clients/api/clients.ts` using the shared BFF routes; preserve `meta` and 409 errors.
-- [ ] T031 [US3] Build paginated list and detail pages in `src/app/(private)/clients/page.tsx` and `src/app/(private)/clients/[id]/page.tsx` with `src/features/clients/components/client-list.tsx`.
-- [ ] T032 [US3] Build create/edit RHF forms and pages in `src/features/clients/components/client-form.tsx` and `src/app/(private)/clients/new/page.tsx` and `src/app/(private)/clients/[id]/edit/page.tsx`.
-- [ ] T033 [US3] Connect confirmed logical archive on detail/list via `src/components/shared/archive-dialog.tsx`; no DELETE on cancel, no optimistic removal on 409.
-- [ ] T034 [US3] Cover client CRUD, pagination, archived detail, cancel/confirm and conflict in `tests/e2e/clients.spec.ts`.
+- [x] T029 [US3] Define create/edit client Zod schemas aligned to NestJS DTOs in `src/features/clients/schemas/client.ts`; test field limits in `tests/unit/client-schema.test.ts`.
+- [x] T030 [US3] Implement typed list/detail/create/update/archive API functions in `src/features/clients/api/clients.ts` using the shared BFF routes; preserve `meta` and 409 errors.
+- [x] T031 [US3] Build paginated list and detail pages in `src/app/(private)/clients/page.tsx` and `src/app/(private)/clients/[id]/page.tsx` with `src/features/clients/components/client-list.tsx`.
+- [x] T032 [US3] Build create/edit RHF forms and pages in `src/features/clients/components/client-form.tsx` and `src/app/(private)/clients/new/page.tsx` and `src/app/(private)/clients/[id]/edit/page.tsx`.
+- [x] T033 [US3] Connect confirmed logical archive on detail/list via `src/components/shared/archive-dialog.tsx`; no DELETE on cancel, no optimistic removal on 409.
+- [x] T034 [US3] Cover client CRUD, pagination, archived detail, cancel/confirm and conflict in `tests/e2e/clients.spec.ts`.
 
 ## Phase 6 — US4: Devices (H4, RF-05/RF-09)
 

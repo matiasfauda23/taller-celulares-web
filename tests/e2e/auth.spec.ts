@@ -3,8 +3,10 @@ import { expect, test } from "@playwright/test";
 import { Redis } from "ioredis";
 
 // Run against the real taller-celulares-api and a real Redis (see .env.local); NestJS issues
-// a 5-second access token in this verification environment specifically so the refresh-on-
-// expiry path below can be observed without mocking anything.
+// a 25-second access token in this verification environment specifically so the refresh-on-
+// expiry path below can be observed without mocking anything. (An access TTL close to
+// getFreshSession's 5s refresh skew — e.g. 5s itself — makes nearly every navigation trigger
+// a refresh and is too flaky for a shared verification account; 25s leaves comfortable room.)
 const credentials = {
   ownerName: "Ana Perez",
   email: `verify-${randomUUID()}@example.com`,
@@ -22,6 +24,7 @@ test("registers against the real API, stores no tokens in the browser, survives 
   page,
   context,
 }) => {
+  test.setTimeout(60_000); // the 25s expiry wait below alone exceeds the default 30s test timeout
   await page.goto("/register");
   await page.getByLabel("Owner name").fill(credentials.ownerName);
   await page.getByLabel("Email").fill(credentials.email);
@@ -51,9 +54,9 @@ test("registers against the real API, stores no tokens in the browser, survives 
   await page.reload();
   await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
 
-  // Outlive the 5-second access token configured for this verification run, then navigate
+  // Outlive the 25-second access token configured for this verification run, then navigate
   // again: getFreshSession() must refresh transparently instead of forcing a re-login.
-  await page.waitForTimeout(6000);
+  await page.waitForTimeout(26000);
   await page.reload();
   await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
   await expect(page).toHaveURL(/\/dashboard$/);

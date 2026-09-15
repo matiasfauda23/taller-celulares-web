@@ -19,17 +19,17 @@
 
 **Goal**: safe server-to-server API access and session primitives independent of a Redis vendor.
 
-- [ ] T007 Define public API DTOs, pagination, status and error types from `contracts/ui-api.md` in `src/lib/api/types.ts`; do not import Prisma types.
-- [ ] T008 Implement the fixed NestJS base URL, endpoint allowlist and no-store server transport in `src/lib/api/nest-client.ts`; never forward arbitrary URLs or tokens to client components.
-- [ ] T009 Test transport contract for Bearer, allowed paths, no-store and malformed responses in `tests/integration/nest-client.test.ts`; refactor T008 as needed.
-- [ ] T010 Define a provider-neutral session store interface with get/create/replace/delete/TTL/lock operations in `src/lib/session/store.ts`; keep Redis implementation behind it.
-- [ ] T011 Implement authenticated/TLS-capable Redis connection, TTL and atomic session operations in `src/lib/session/redis-store.ts`; verify fail-closed behavior when Redis is unavailable in `tests/integration/redis-store.test.ts`.
-- [ ] T012 Implement random opaque session IDs and `HttpOnly`/production `Secure`/`SameSite=Lax` cookie creation/deletion in `src/lib/session/cookie.ts`; test flags and absence of tokens in `tests/unit/cookie.test.ts`.
-- [ ] T013 Implement server-only session lookup and protection checks in `src/lib/session/session.ts`; test missing/expired store entries and cookie in `tests/unit/session.test.ts`.
-- [ ] T014 Implement centralized NestJS error parsing (`statusCode`, `code`, `message`, `path`, `details?`) and safe fallback in `src/lib/api/error.ts`; cover 400/401/404/409/429/network/5xx in `tests/unit/api-error.test.ts`.
-- [ ] T015 Implement same-origin Origin/Host and CSRF protection for state-changing BFF routes in `src/lib/security/csrf.ts`; test rejection of cross-origin or missing proof in `tests/unit/csrf.test.ts`.
-- [ ] T016 Create restricted BFF resource route handlers in `src/app/api/clients/[...path]/route.ts`, `src/app/api/devices/[...path]/route.ts` and `src/app/api/work-orders/[...path]/route.ts`; validate method, ID, query and body allowlists and recheck session per call.
-- [ ] T017 Test BFF allowlists, 401/404 passthrough, secret non-disclosure and cache headers in `tests/integration/resource-proxy.test.ts` before opening feature CRUD work.
+- [x] T007 Define public API DTOs, pagination, status and error types from `contracts/ui-api.md` in `src/lib/api/types.ts`; do not import Prisma types.
+- [x] T008 Implement the fixed NestJS base URL, endpoint allowlist and no-store server transport in `src/lib/api/nest-client.ts`; never forward arbitrary URLs or tokens to client components.
+- [x] T009 Test transport contract for Bearer, allowed paths, no-store and malformed responses in `tests/integration/nest-client.test.ts`; refactor T008 as needed.
+- [x] T010 Define a provider-neutral session store interface with get/create/replace/delete/TTL/lock operations in `src/lib/session/store.ts`; keep Redis implementation behind it.
+- [x] T011 Implement authenticated/TLS-capable Redis connection, TTL and atomic session operations in `src/lib/session/redis-store.ts`; verify fail-closed behavior when Redis is unavailable in `tests/integration/redis-store.test.ts`.
+- [x] T012 Implement random opaque session IDs and `HttpOnly`/production `Secure`/`SameSite=Lax` cookie creation/deletion in `src/lib/session/cookie.ts`; test flags and absence of tokens in `tests/unit/cookie.test.ts`.
+- [x] T013 Implement server-only session lookup and protection checks in `src/lib/session/session.ts`; test missing/expired store entries and cookie in `tests/unit/session.test.ts`.
+- [x] T014 Implement centralized NestJS error parsing (`statusCode`, `code`, `message`, `path`, `details?`) and safe fallback in `src/lib/api/error.ts`; cover 400/401/404/409/429/network/5xx in `tests/unit/api-error.test.ts`.
+- [x] T015 Implement same-origin Origin/Host and CSRF protection for state-changing BFF routes in `src/lib/security/csrf.ts`; test rejection of cross-origin or missing proof in `tests/unit/csrf.test.ts`.
+- [x] T016 Create restricted BFF resource route handlers in `src/app/api/clients/[...path]/route.ts`, `src/app/api/devices/[...path]/route.ts` and `src/app/api/work-orders/[...path]/route.ts`; validate method, ID, query and body allowlists and recheck session per call.
+- [x] T017 Test BFF allowlists, 401/404 passthrough, secret non-disclosure and cache headers in `tests/integration/resource-proxy.test.ts` before opening feature CRUD work.
 
 ## Phase 3 — US1: Account and session (H1, RF-01/RF-02)
 

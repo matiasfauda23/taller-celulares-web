@@ -45,9 +45,11 @@ function defaultClient(): Redis {
   if (!sharedClient) {
     const { redisUrl } = getServerEnv();
     sharedClient = new Redis(redisUrl.toString(), {
-      // Fail fast per-call instead of silently queueing commands while disconnected: a BFF
-      // must never treat "Redis is unreachable" as "the session is valid".
-      enableOfflineQueue: false,
+      // Offline queueing stays on (the default) so a command issued the instant this client
+      // is constructed — e.g. the first request after a cold start — waits out the initial
+      // handshake instead of failing outright. `maxRetriesPerRequest` still bounds how long a
+      // genuinely unreachable Redis can leave a command pending before it rejects: a BFF must
+      // never treat "Redis is unreachable" as "the session is valid".
       maxRetriesPerRequest: 1,
       connectTimeout: 2000,
       commandTimeout: 2000,

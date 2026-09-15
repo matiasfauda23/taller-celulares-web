@@ -1,7 +1,7 @@
 import "server-only";
 import { NextResponse } from "next/server";
 import { assertSameOriginRequest, CsrfError } from "@/lib/security/csrf";
-import { getActiveSession } from "@/lib/session/session";
+import { getFreshSession } from "@/lib/session/session";
 import { NestEndpointNotAllowedError, callNestApi, type NestMethod } from "./nest-client";
 import { networkErrorBody, parseNestErrorBody } from "./error";
 
@@ -146,13 +146,19 @@ export function createResourceHandler(resource: ResourceName) {
       }
     }
 
-    let session;
+    let outcome;
     try {
-      session = await getActiveSession();
+      outcome = await getFreshSession();
     } catch {
       return jsonError(401, "AUTHENTICATION_REQUIRED", "Authentication required", path);
     }
-    if (!session) return jsonError(401, "AUTHENTICATION_REQUIRED", "Authentication required", path);
+    if (outcome.status === "unauthenticated") {
+      return jsonError(401, "AUTHENTICATION_REQUIRED", "Authentication required", path);
+    }
+    if (outcome.status === "unavailable") {
+      return NextResponse.json(networkErrorBody(path), { status: 502, headers: { "Cache-Control": "no-store" } });
+    }
+    const session = outcome.session;
 
     const query = method === "GET" ? filterQuery(resource, new URL(request.url)) : undefined;
 

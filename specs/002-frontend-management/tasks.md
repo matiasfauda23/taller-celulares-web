@@ -35,14 +35,14 @@
 
 **Goal**: register/login, maintain, refresh and close a protected session. **Independent test**: authenticate against mocked NestJS, reload, expire access, refresh once, reject invalid refresh and logout without exposing tokens.
 
-- [ ] T018 [US1] Define Zod/RHF login and register schemas matching auth DTO lengths/normalization in `src/features/auth/schemas/auth.ts`; test valid, invalid and optional cases in `tests/unit/auth-schema.test.ts`.
-- [ ] T019 [US1] Implement `POST /auth/login` and `POST /auth/register` BFF handlers in `src/app/api/session/login/route.ts` and `src/app/api/session/register/route.ts`; persist tokens only in Redis and set opaque cookie, returning only public profile/error.
-- [ ] T020 [US1] Build login and register forms with react-hook-form, `zodResolver`, shadcn/ui and pending/error states in `src/features/auth/components/login-form.tsx`, `src/features/auth/components/register-form.tsx`, `src/app/(public)/login/page.tsx` and `src/app/(public)/register/page.tsx`.
-- [ ] T021 [US1] Implement distributed refresh single-flight with renewable bounded lock, atomic token replacement and fail-closed uncertain outcome in `src/lib/session/refresh.ts`; never retry an ambiguous mutation.
-- [ ] T022 [US1] Write integration tests for two concurrent refreshes, access expiry, invalid refresh and uncertain timeout in `tests/integration/refresh.test.ts` using a fake NestJS and shared Redis adapter.
-- [ ] T023 [US1] Implement controlled session refresh/logout BFF handlers in `src/app/api/session/refresh/route.ts` and `src/app/api/session/logout/route.ts`; clear Redis and cookie on logout even if NestJS fails, without claiming remote JWT revocation.
-- [ ] T024 [US1] Protect `src/app/(private)/layout.tsx` and each BFF operation via `src/lib/session/session.ts`; redirect absent/invalid session, check `GET /auth/me` when profile is required.
-- [ ] T025 [US1] Add auth integration/E2E tests for login, register, reload, protected redirect, logout and no browser-token storage in `tests/e2e/auth.spec.ts` and `tests/integration/auth-routes.test.ts`.
+- [x] T018 [US1] Define Zod/RHF login and register schemas matching auth DTO lengths/normalization in `src/features/auth/schemas/auth.ts`; test valid, invalid and optional cases in `tests/unit/auth-schema.test.ts`.
+- [x] T019 [US1] Implement `POST /auth/login` and `POST /auth/register` BFF handlers in `src/app/api/session/login/route.ts` and `src/app/api/session/register/route.ts`; persist tokens only in Redis and set opaque cookie, returning only public profile/error.
+- [x] T020 [US1] Build login and register forms with react-hook-form, `zodResolver`, shadcn/ui and pending/error states in `src/features/auth/components/login-form.tsx`, `src/features/auth/components/register-form.tsx`, `src/app/(public)/login/page.tsx` and `src/app/(public)/register/page.tsx`.
+- [x] T021 [US1] Implement distributed refresh single-flight with renewable bounded lock, atomic token replacement and fail-closed uncertain outcome in `src/lib/session/refresh.ts`; never retry an ambiguous mutation.
+- [x] T022 [US1] Write integration tests for two concurrent refreshes, access expiry, invalid refresh and uncertain timeout in `tests/integration/refresh.test.ts` using a fake NestJS and shared Redis adapter.
+- [x] T023 [US1] Implement controlled session refresh/logout BFF handlers in `src/app/api/session/refresh/route.ts` and `src/app/api/session/logout/route.ts`; clear Redis and cookie on logout even if NestJS fails, without claiming remote JWT revocation.
+- [x] T024 [US1] Protect `src/app/(private)/layout.tsx` and each BFF operation via `src/lib/session/session.ts`; redirect absent/invalid session, check `GET /auth/me` when profile is required.
+- [x] T025 [US1] Add auth integration/E2E tests for login, register, reload, protected redirect, logout and no browser-token storage in `tests/e2e/auth.spec.ts` and `tests/integration/auth-routes.test.ts`.
 
 ## Phase 4 — US2: Dashboard (H2, RF-03/RF-04)
 

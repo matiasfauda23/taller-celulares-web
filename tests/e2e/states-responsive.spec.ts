@@ -19,7 +19,7 @@ test("shows the list skeleton while the devices request is in flight", async ({ 
     await route.continue();
   });
 
-  await page.getByRole("link", { name: "Dispositivos" }).click();
+  await page.getByRole("link", { name: "Dispositivos", exact: true }).click();
 
   // loading.tsx renders pulse blocks; the real table only replaces them once the request settles.
   await expect(page.locator(".animate-pulse").first()).toBeVisible();
@@ -62,7 +62,7 @@ test("renders a recoverable error and keeps the session when a mutation fails", 
 
   // A failed mutation must not end the session: the page still works without signing in again.
   await page.unroute(`**/api/clients/${clientId}`);
-  await page.getByRole("link", { name: "Clientes" }).click();
+  await page.getByRole("link", { name: "Clientes", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Clientes" })).toBeVisible();
 });
 
@@ -170,6 +170,6 @@ test("keeps the mobile navigation usable with the menu closed", async ({ page })
   await toggle.click();
 
   await expect(page.getByRole("button", { name: "Cerrar menú" })).toBeVisible();
-  await page.getByRole("link", { name: "Órdenes" }).click();
+  await page.getByRole("link", { name: "Órdenes", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Órdenes de trabajo" })).toBeVisible();
 });

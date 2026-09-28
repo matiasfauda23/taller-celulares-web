@@ -12,7 +12,7 @@ export default function DashboardError({
   return (
     <div className="flex flex-col gap-6 p-4">
       <ErrorState
-        message="No se pudo cargar el dashboard. Intenta de nuevo."
+        message="No se pudo cargar el panel. Intenta de nuevo."
         onRetry={reset}
       />
     </div>

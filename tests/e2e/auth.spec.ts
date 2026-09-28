@@ -40,7 +40,7 @@ test("registers against the real API, stores no tokens in the browser, survives 
   await page.getByRole("button", { name: "Crear cuenta" }).click();
 
   await expect(page).toHaveURL(/\/dashboard$/);
-  await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Panel" })).toBeVisible();
 
   const cookies = await context.cookies();
   const sessionCookie = cookies.find((cookie) => cookie.name === "workshop_session");
@@ -58,13 +58,13 @@ test("registers against the real API, stores no tokens in the browser, survives 
   expect(html).not.toMatch(/eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/); // no JWT-looking string anywhere in the page
 
   await page.reload();
-  await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Panel" })).toBeVisible();
 
   // Outlive the 25-second access token configured for this verification run, then navigate
   // again: getFreshSession() must refresh transparently instead of forcing a re-login.
   await page.waitForTimeout(26000);
   await page.reload();
-  await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Panel" })).toBeVisible();
   await expect(page).toHaveURL(/\/dashboard$/);
 
   await page.getByRole("button", { name: "Cerrar sesión" }).click();
@@ -81,7 +81,7 @@ test("logs back in against the real API with the already-registered credentials"
   await page.getByRole("button", { name: "Iniciar sesión" }).click();
 
   await expect(page).toHaveURL(/\/dashboard$/);
-  await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Panel" })).toBeVisible();
 });
 
 test("shows a recoverable error and stays on the login page for invalid credentials", async ({ page }) => {

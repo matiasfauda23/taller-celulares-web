@@ -6,7 +6,7 @@ interface PageHeaderProps {
   newLabel?: string;
 }
 
-export function PageHeader({ title, newHref, newLabel = "New" }: PageHeaderProps) {
+export function PageHeader({ title, newHref, newLabel = "Nuevo" }: PageHeaderProps) {
   return (
     <div className="flex items-center justify-between gap-4">
       <h1 className="text-base leading-snug font-medium">{title}</h1>

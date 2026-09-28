@@ -98,24 +98,24 @@ test("shows real counts and the reception-order list for a freshly seeded worksh
   await page.getByLabel("Contraseña").fill(password);
   await page.getByRole("button", { name: "Iniciar sesión" }).click();
   await expect(page).toHaveURL(/\/dashboard$/);
-  await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Panel" })).toBeVisible();
 
-  await expect(page.getByText("Active clients")).toBeVisible();
+  await expect(page.getByText("Clientes activos")).toBeVisible();
   await expect(page.getByText("2", { exact: true }).first()).toBeVisible();
 
   const main = page.locator("body");
-  await expect(main).toContainText("Active devices");
-  await expect(main).toContainText("Work orders");
-  await expect(main).toContainText("Ready for pickup");
+  await expect(main).toContainText("Dispositivos activos");
+  await expect(main).toContainText("Órdenes de trabajo");
+  await expect(main).toContainText("Listos para retirar");
 
-  await expect(page.getByText("Orders by reception date")).toBeVisible();
+  await expect(page.getByText("Órdenes por fecha de recepción")).toBeVisible();
   await expect(page.getByText(orderReady.number)).toBeVisible();
   await expect(page.getByText(orderReceived.number)).toBeVisible();
 
-  await expect(page.getByRole("link", { name: "View clients" })).toHaveAttribute("href", "/clients");
-  await expect(page.getByRole("link", { name: "View devices" })).toHaveAttribute("href", "/devices");
-  await expect(page.getByRole("link", { name: "View work orders" })).toHaveAttribute("href", "/work-orders");
-  await expect(page.getByRole("link", { name: "New work order" })).toHaveAttribute("href", "/work-orders/new");
+  await expect(page.getByRole("link", { name: "Ver clientes" })).toHaveAttribute("href", "/clients");
+  await expect(page.getByRole("link", { name: "Ver dispositivos" })).toHaveAttribute("href", "/devices");
+  await expect(page.getByRole("link", { name: "Ver órdenes de trabajo" })).toHaveAttribute("href", "/work-orders");
+  await expect(page.getByRole("link", { name: "Nueva orden" })).toHaveAttribute("href", "/work-orders/new");
 });
 
 test("redirects an unauthenticated visitor away from the dashboard", async ({ page }) => {

@@ -4,20 +4,20 @@ import type { DashboardData, DashboardMetric, RecentOrders } from "@/features/da
 import type { WorkOrder } from "@/lib/api/types";
 
 const QUICK_LINKS = [
-  { href: "/clients", label: "View clients" },
-  { href: "/devices", label: "View devices" },
-  { href: "/work-orders", label: "View work orders" },
-  { href: "/work-orders/new", label: "New work order" },
+  { href: "/clients", label: "Ver clientes" },
+  { href: "/devices", label: "Ver dispositivos" },
+  { href: "/work-orders", label: "Ver órdenes de trabajo" },
+  { href: "/work-orders/new", label: "Nueva orden" },
 ] as const;
 
 const METRICS: Array<{
   key: "activeClients" | "activeDevices" | "totalWorkOrders" | "readyWorkOrders";
   label: string;
 }> = [
-  { key: "activeClients", label: "Active clients" },
-  { key: "activeDevices", label: "Active devices" },
-  { key: "totalWorkOrders", label: "Work orders" },
-  { key: "readyWorkOrders", label: "Ready for pickup" },
+  { key: "activeClients", label: "Clientes activos" },
+  { key: "activeDevices", label: "Dispositivos activos" },
+  { key: "totalWorkOrders", label: "Órdenes de trabajo" },
+  { key: "readyWorkOrders", label: "Listos para retirar" },
 ];
 
 function MetricCard({ label, metric }: { label: string; metric: DashboardMetric }) {
@@ -29,7 +29,7 @@ function MetricCard({ label, metric }: { label: string; metric: DashboardMetric 
           <p className="text-2xl font-semibold">{metric.total}</p>
         ) : (
           <p role="alert" className="text-sm text-destructive">
-            Could not load this metric.
+            No se pudo cargar esta métrica.
           </p>
         )}
       </CardContent>
@@ -46,13 +46,13 @@ function RecentOrdersSection({ recentOrders }: { recentOrders: RecentOrders }) {
   if (recentOrders.status === "error") {
     return (
       <p role="alert" className="text-sm text-destructive">
-        Could not load recent orders.
+        No se pudieron cargar las órdenes recientes.
       </p>
     );
   }
 
   if (recentOrders.data.length === 0) {
-    return <p className="text-sm text-muted-foreground">No work orders yet.</p>;
+    return <p className="text-sm text-muted-foreground">Aún no hay órdenes de trabajo.</p>;
   }
 
   return (
@@ -71,7 +71,7 @@ function RecentOrdersSection({ recentOrders }: { recentOrders: RecentOrders }) {
 export function DashboardView({ data }: { data: DashboardData }) {
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-base leading-snug font-medium">Dashboard</h1>
+      <h1 className="text-base leading-snug font-medium">Panel</h1>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {METRICS.map(({ key, label }) => (
@@ -82,7 +82,7 @@ export function DashboardView({ data }: { data: DashboardData }) {
       <Card>
         <CardHeader>
           <CardTitle>
-            <p className="text-sm font-medium">Orders by reception date</p>
+            <p className="text-sm font-medium">Órdenes por fecha de recepción</p>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -90,7 +90,7 @@ export function DashboardView({ data }: { data: DashboardData }) {
         </CardContent>
       </Card>
 
-      <nav aria-label="Quick links" className="flex flex-wrap gap-3">
+      <nav aria-label="Enlaces rápidos" className="flex flex-wrap gap-3">
         {QUICK_LINKS.map((link) => (
           <Link key={link.href} href={link.href} className="rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-muted">
             {link.label}

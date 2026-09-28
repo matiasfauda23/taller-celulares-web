@@ -1,7 +1,7 @@
 # Tasks: 002-frontend-management
 
 **Input**: [spec.md](spec.md), [plan.md](plan.md), [research.md](research.md), [data-model.md](data-model.md), [contracts/ui-api.md](contracts/ui-api.md), [quickstart.md](quickstart.md).  
-**Repository**: `taller-celulares-web` only. **Status**: planning; no task has been implemented.  
+**Repository**: `taller-celulares-web` only. **Status**: complete; all T001–T056 implemented and verified (see `verification.md`).  
 **Rule**: NestJS and its Constitution remain untouched; tests accompany each vertical slice.
 
 ## Phase 1 — Setup
@@ -67,41 +67,41 @@
 
 **Goal**: list/detail/create/edit/archive devices owned by an active client. **Independent test**: select active client, create/edit device, cancel/confirm archive and retain record on 409.
 
-- [ ] T035 [US4] Define create/edit device Zod schemas and client selection constraints in `src/features/devices/schemas/device.ts`; test DTO boundaries in `tests/unit/device-schema.test.ts`.
-- [ ] T036 [US4] Implement typed device operations and active-client choices through existing routes in `src/features/devices/api/devices.ts` and `src/features/clients/api/clients.ts`.
-- [ ] T037 [US4] Build device list/detail with pagination in `src/app/(private)/devices/page.tsx` and `src/app/(private)/devices/[id]/page.tsx` and `src/features/devices/components/device-list.tsx`.
-- [ ] T038 [US4] Build create/edit RHF device form in `src/features/devices/components/device-form.tsx` and `src/app/(private)/devices/new/page.tsx` and `src/app/(private)/devices/[id]/edit/page.tsx`.
-- [ ] T039 [US4] Reuse `src/components/shared/archive-dialog.tsx` for device archive and render NestJS 404/409 without removing failed item.
-- [ ] T040 [US4] Cover device CRUD, client ownership rejection, archive confirmation/conflict and empty list in `tests/e2e/devices.spec.ts`.
+- [x] T035 [US4] Define create/edit device Zod schemas and client selection constraints in `src/features/devices/schemas/device.ts`; test DTO boundaries in `tests/unit/device-schema.test.ts`.
+- [x] T036 [US4] Implement typed device operations and active-client choices through existing routes in `src/features/devices/api/devices.ts` and `src/features/clients/api/clients.ts`.
+- [x] T037 [US4] Build device list/detail with pagination in `src/app/(private)/devices/page.tsx` and `src/app/(private)/devices/[id]/page.tsx` and `src/features/devices/components/device-list.tsx`.
+- [x] T038 [US4] Build create/edit RHF device form (client component as `src/features/devices/components/device-form.client.tsx`) in `src/app/(private)/devices/new/page.tsx` and `src/app/(private)/devices/[id]/edit/page.tsx`.
+- [x] T039 [US4] Reuse `src/components/shared/archive-dialog.tsx` for device archive and render NestJS 404/409 without removing failed item.
+- [x] T040 [US4] Cover device CRUD, client ownership rejection, archive confirmation/conflict and empty list in `tests/e2e/devices.spec.ts`.
 
 ## Phase 7 — US5: Work orders (H5, RF-06/RF-07/RF-09)
 
 **Goal**: list/filter/detail/create/edit/status/archive using only NestJS rules. **Independent test**: create an order, update editable fields, transition through dedicated route and archive only when API accepts.
 
-- [ ] T041 [US5] Define order create/edit/status Zod schemas using DTO fields and decimal conversion in `src/features/work-orders/schemas/work-order.ts`; test omitted optional fields and response decimal strings in `tests/unit/work-order-schema.test.ts`.
-- [ ] T042 [US5] Implement typed list/filter/detail/create/update/status/archive operations in `src/features/work-orders/api/work-orders.ts`; status uses `PATCH /:id/status`, edit excludes `deviceId`, `receivedAt`, `status`.
-- [ ] T043 [US5] Build paginated/filtered list and detail in `src/app/(private)/work-orders/page.tsx` and `src/app/(private)/work-orders/[id]/page.tsx` and `src/features/work-orders/components/work-order-list.tsx`.
-- [ ] T044 [US5] Build create/edit RHF forms and pages in `src/features/work-orders/components/work-order-form.tsx` and `src/app/(private)/work-orders/new/page.tsx` and `src/app/(private)/work-orders/[id]/edit/page.tsx`.
-- [ ] T045 [US5] Build dedicated status control in `src/features/work-orders/components/status-action.tsx`; display backend-accepted state and preserve old state on 409.
-- [ ] T046 [US5] Reuse `src/components/shared/archive-dialog.tsx` for final-order archive; preserve row and show backend error when not archivable.
-- [ ] T047 [US5] Cover filters, CRUD, status route, missing diagnosis/work, final/non-final archive and decimal display in `tests/e2e/work-orders.spec.ts`.
+- [x] T041 [US5] Define order create/edit/status Zod schemas using DTO fields and decimal conversion in `src/features/work-orders/schemas/work-order.ts`; test omitted optional fields and response decimal strings in `tests/unit/work-order-schema.test.ts`.
+- [x] T042 [US5] Implement typed list/filter/detail/create/update/status/archive operations in `src/features/work-orders/api/work-orders.ts`; status uses `PATCH /:id/status`, edit excludes `deviceId`, `receivedAt`, `status`.
+- [x] T043 [US5] Build paginated/filtered list and detail in `src/app/(private)/work-orders/page.tsx` and `src/app/(private)/work-orders/[id]/page.tsx` and `src/features/work-orders/components/work-order-list.tsx`.
+- [x] T044 [US5] Build create/edit RHF forms and pages (client component as `src/features/work-orders/components/work-order-form.client.tsx`) in `src/app/(private)/work-orders/new/page.tsx` and `src/app/(private)/work-orders/[id]/edit/page.tsx`.
+- [x] T045 [US5] Build dedicated status control in `src/features/work-orders/components/status-action.tsx`; display backend-accepted state and preserve old state on 409.
+- [x] T046 [US5] Reuse `src/components/shared/archive-dialog.tsx` for final-order archive; preserve row and show backend error when not archivable.
+- [x] T047 [US5] Cover filters, CRUD, status route, missing diagnosis/work, final/non-final archive and decimal display in `tests/e2e/work-orders.spec.ts`.
 
 ## Phase 8 — US6: Cross-cutting UX (H6, RF-08/RF-09)
 
 **Goal**: all flows distinguish loading, empty, error and usable mobile/desktop. **Independent test**: force each state on each resource and operate without horizontal loss at mobile width.
 
-- [ ] T048 [US6] Consolidate shared `PageHeader`, `Pagination`, `EmptyState`, `ErrorState` and loading skeletons from H2–H5 in `src/components/shared/page-header.tsx`, `src/components/shared/pagination.tsx`, `src/components/shared/empty-state.tsx`, `src/components/shared/error-state.tsx` and `src/components/shared/loading-skeleton.tsx`.
-- [ ] T049 [US6] Add route `loading.tsx`/`error.tsx` boundaries in `src/app/(private)/dashboard/`, `src/app/(private)/clients/`, `src/app/(private)/devices/` and `src/app/(private)/work-orders/`; retain independent dashboard metric failures.
-- [ ] T050 [US6] Map NestJS validation `details` to RHF fields and general 400/401/404/409/429/network states in `src/lib/api/present-error.ts` and `src/components/shared/api-error-alert.tsx`.
-- [ ] T051 [US6] Implement responsive navigation, tables/card fallback, form spacing and accessible dialogs in `src/app/(private)/layout.tsx`, `src/app/globals.css` and `src/components/shared/`.
-- [ ] T052 [US6] Test loading, empty/error, keyboard focus, duplicate-submit blocking and mobile/desktop viewport flows in `tests/e2e/states-responsive.spec.ts`.
+- [x] T048 [US6] Consolidate shared `PageHeader`, `Pagination`, `EmptyState`, `ErrorState` and loading skeletons from H2–H5 in `src/components/shared/page-header.tsx`, `src/components/shared/pagination.tsx`, `src/components/shared/empty-state.tsx`, `src/components/shared/error-state.tsx` and `src/components/shared/loading-skeleton.tsx`.
+- [x] T049 [US6] Add route `loading.tsx`/`error.tsx` boundaries in `src/app/(private)/dashboard/`, `src/app/(private)/clients/`, `src/app/(private)/devices/` and `src/app/(private)/work-orders/`; retain independent dashboard metric failures.
+- [x] T050 [US6] Map NestJS validation `details` to RHF fields and general 400/401/404/409/429/network states in `src/lib/api/present-error.ts` and `src/components/shared/api-error-alert.tsx`.
+- [x] T051 [US6] Implement responsive navigation, tables/card fallback, form spacing and accessible dialogs in `src/app/(private)/layout.tsx`, `src/app/globals.css` and `src/components/shared/`.
+- [x] T052 [US6] Test loading, empty/error, keyboard focus, duplicate-submit blocking and mobile/desktop viewport flows in `tests/e2e/states-responsive.spec.ts`.
 
 ## Phase 9 — Verification and handoff
 
-- [ ] T053 Run and fix `pnpm typecheck` in `taller-celulares-web/tsconfig.json` and affected source files; record exact result in `specs/002-frontend-management/verification.md`.
-- [ ] T054 Run and fix `pnpm lint` in `taller-celulares-web/eslint.config.mjs` and affected source files; record exact result in `specs/002-frontend-management/verification.md`.
-- [ ] T055 Run `pnpm test`, `pnpm test:e2e` and `pnpm build`, fixing failures in their owning work units and recording results in `specs/002-frontend-management/verification.md`.
-- [ ] T056 Audit browser storage, HTML and logs for token leakage; review Redis fail-closed and refresh-crash limits against `specs/002-frontend-management/plan.md`, recording evidence in `specs/002-frontend-management/verification.md`.
+- [x] T053 Run and fix `pnpm typecheck` in `taller-celulares-web/tsconfig.json` and affected source files; record exact result in `specs/002-frontend-management/verification.md`.
+- [x] T054 Run and fix `pnpm lint` in `taller-celulares-web/eslint.config.mjs` and affected source files; record exact result in `specs/002-frontend-management/verification.md`.
+- [x] T055 Run `pnpm test`, `pnpm test:e2e` and `pnpm build`, fixing failures in their owning work units and recording results in `specs/002-frontend-management/verification.md`.
+- [x] T056 Audit browser storage, HTML and logs for token leakage; review Redis fail-closed and refresh-crash limits against `specs/002-frontend-management/plan.md`, recording evidence in `specs/002-frontend-management/verification.md`.
 
 ## Dependencies and parallel work
 

@@ -13,13 +13,13 @@ import { updateWorkOrderStatus } from "@/features/work-orders/api/work-order-act
 import type { WorkOrderStatus } from "@/lib/api/types";
 
 const STATUS_OPTIONS: { value: WorkOrderStatus; label: string }[] = [
-  { value: "RECEIVED", label: "Received" },
-  { value: "DIAGNOSING", label: "Diagnosing" },
-  { value: "WAITING_PARTS", label: "Waiting parts" },
-  { value: "REPAIRING", label: "Repairing" },
-  { value: "READY", label: "Ready" },
-  { value: "DELIVERED", label: "Delivered" },
-  { value: "CANCELLED", label: "Cancelled" },
+  { value: "RECEIVED", label: "Recibido" },
+  { value: "DIAGNOSING", label: "Diagnosticando" },
+  { value: "WAITING_PARTS", label: "Esperando repuestos" },
+  { value: "REPAIRING", label: "Reparando" },
+  { value: "READY", label: "Listo" },
+  { value: "DELIVERED", label: "Entregado" },
+  { value: "CANCELLED", label: "Cancelado" },
 ];
 
 const TRANSITIONS: Record<WorkOrderStatus, WorkOrderStatus[]> = {
@@ -66,9 +66,9 @@ export function StatusAction({ workOrderId, currentStatus }: StatusActionProps) 
 
   if (allowedStatuses.length === 0) {
     return (
-      <span className="text-sm text-muted-foreground">
-        No transitions available (final state)
-      </span>
+        <span className="text-sm text-muted-foreground">
+          No hay transiciones disponibles (estado final)
+        </span>
     );
   }
 
@@ -76,9 +76,15 @@ export function StatusAction({ workOrderId, currentStatus }: StatusActionProps) 
     <div className="flex flex-col gap-2">
       <Select value={status} onValueChange={handleChange} disabled={pending}>
         <SelectTrigger className="w-[200px]">
-          <SelectValue placeholder="Select status" />
+          <SelectValue placeholder="Seleccionar estado" />
         </SelectTrigger>
         <SelectContent>
+          {/* The current status has to exist as an item, otherwise the trigger has no matching item
+              to render and the control reads as empty. It is disabled because it is not a
+              transition, and `allowedStatuses` never includes it, so there is no duplicate. */}
+          <SelectItem value={currentStatus} disabled>
+            {STATUS_OPTIONS.find((opt) => opt.value === currentStatus)?.label ?? currentStatus}
+          </SelectItem>
           {allowedStatuses.map((s) => (
             <SelectItem key={s} value={s}>
               {STATUS_OPTIONS.find((opt) => opt.value === s)?.label ?? s}

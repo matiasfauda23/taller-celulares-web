@@ -20,15 +20,15 @@ export default async function ClientsPage({ searchParams }: ClientsPageProps) {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-base leading-snug font-medium">Clients</h1>
+        <h1 className="text-base leading-snug font-medium">Clientes</h1>
         <Link href="/clients/new" className="rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-muted">
-          New client
+          Nuevo cliente
         </Link>
       </div>
 
       {result.status === "error" ? (
         <p role="alert" className="text-sm text-destructive">
-          Could not load clients: {result.error.message}
+          No se pudieron cargar los clientes: {result.error.message}
         </p>
       ) : (
         <ClientList page={result.page} />

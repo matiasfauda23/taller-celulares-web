@@ -17,14 +17,16 @@ export default async function DevicePage({ params }: DevicePageProps) {
   const result = await getDevice(session.record.accessToken, id);
 
   if (result.status === "error") {
-    if (result.error.statusCode === 404) {
-      redirect("/devices");
-    }
     return (
       <div className="flex flex-col gap-6">
         <p role="alert" className="text-sm text-destructive">
-          No se pudo cargar el dispositivo: {result.error.message}
+          {result.error.statusCode === 404
+            ? "No se encontró el dispositivo."
+            : `No se pudo cargar el dispositivo: ${result.error.message}`}
         </p>
+        <Link href="/devices" className="w-fit rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-muted">
+          Volver a la lista
+        </Link>
       </div>
     );
   }
@@ -38,7 +40,9 @@ export default async function DevicePage({ params }: DevicePageProps) {
           <h1 className="text-base leading-snug font-medium">{device.brand} {device.model}</h1>
           <p className="text-sm text-muted-foreground">{device.serialNumber ?? "Sin número de serie"}</p>
         </div>
-        <ArchiveDeviceButton deviceId={device.id} deviceName={`${device.brand} ${device.model}`} />
+        {device.archivedAt ? null : (
+          <ArchiveDeviceButton deviceId={device.id} deviceName={`${device.brand} ${device.model}`} />
+        )}
       </div>
 
       <Card>
@@ -77,9 +81,11 @@ export default async function DevicePage({ params }: DevicePageProps) {
           </dl>
 
           <div className="flex gap-3 pt-2 border-t">
-            <Link href={`/devices/${device.id}/edit`} className="rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-muted">
-              Editar dispositivo
-            </Link>
+            {device.archivedAt ? null : (
+              <Link href={`/devices/${device.id}/edit`} className="rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-muted">
+                Editar dispositivo
+              </Link>
+            )}
             <Link href="/devices" className="rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-muted">
               Volver a la lista
             </Link>

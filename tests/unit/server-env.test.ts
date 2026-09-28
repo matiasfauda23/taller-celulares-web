@@ -12,4 +12,9 @@ describe("server environment", () => {
     expect(() => validateServerEnv({ ...valid, REDIS_URL: undefined })).toThrow("REDIS_URL");
     expect(() => validateServerEnv({ ...valid, NODE_ENV: "production" })).toThrow("HTTPS");
   });
+  it("allows a plain-HTTP production origin only behind the explicit verification flag", () => {
+    expect(validateServerEnv({ ...valid, NODE_ENV: "production", APP_ALLOW_INSECURE_ORIGIN: "true" }).appOrigin.protocol).toBe("http:");
+    expect(() => validateServerEnv({ ...valid, NODE_ENV: "production", APP_ALLOW_INSECURE_ORIGIN: "false" })).toThrow("HTTPS");
+    expect(() => validateServerEnv({ ...valid, NODE_ENV: "production", APP_ALLOW_INSECURE_ORIGIN: "yes" })).toThrow("HTTPS");
+  });
 });

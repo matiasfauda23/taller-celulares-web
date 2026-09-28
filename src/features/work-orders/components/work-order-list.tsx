@@ -25,9 +25,17 @@ const STATUS_VARIANTS: Record<WorkOrderStatus, "default" | "secondary" | "destru
 
 interface WorkOrderListProps {
   page: Page<WorkOrder>;
+  /** Active filters, re-applied to the pagination links so paging never drops them. */
+  filters?: URLSearchParams;
 }
 
-export function WorkOrderList({ page }: WorkOrderListProps) {
+function pageHref(filters: URLSearchParams | undefined, page: number): string {
+  const query = new URLSearchParams(filters);
+  query.set("page", String(page));
+  return `/work-orders?${query.toString()}`;
+}
+
+export function WorkOrderList({ page, filters }: WorkOrderListProps) {
   const { data, meta } = page;
 
   if (data.length === 0) {
@@ -135,14 +143,14 @@ export function WorkOrderList({ page }: WorkOrderListProps) {
         </span>
         <div className="flex gap-2">
           {hasPrev ? (
-            <Link href={`/work-orders?page=${meta.page - 1}`} className="rounded-lg border border-input px-3 py-1.5 hover:bg-muted">
+            <Link href={pageHref(filters, meta.page - 1)} className="rounded-lg border border-input px-3 py-1.5 hover:bg-muted">
               Anterior
             </Link>
           ) : (
             <span className="rounded-lg border border-input px-3 py-1.5 text-muted-foreground opacity-50">Anterior</span>
           )}
           {hasNext ? (
-            <Link href={`/work-orders?page=${meta.page + 1}`} className="rounded-lg border border-input px-3 py-1.5 hover:bg-muted">
+            <Link href={pageHref(filters, meta.page + 1)} className="rounded-lg border border-input px-3 py-1.5 hover:bg-muted">
               Siguiente
             </Link>
           ) : (

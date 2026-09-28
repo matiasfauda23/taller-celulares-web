@@ -18,14 +18,16 @@ export default async function WorkOrderPage({ params }: WorkOrderPageProps) {
   const result = await getWorkOrder(session.record.accessToken, id);
 
   if (result.status === "error") {
-    if (result.error.statusCode === 404) {
-      redirect("/work-orders");
-    }
     return (
       <div className="flex flex-col gap-6">
         <p role="alert" className="text-sm text-destructive">
-          No se pudo cargar la orden: {result.error.message}
+          {result.error.statusCode === 404
+            ? "No se encontró la orden."
+            : `No se pudo cargar la orden: ${result.error.message}`}
         </p>
+        <Link href="/work-orders" className="w-fit rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-muted">
+          Volver a la lista
+        </Link>
       </div>
     );
   }
@@ -40,7 +42,9 @@ export default async function WorkOrderPage({ params }: WorkOrderPageProps) {
           <p className="text-sm text-muted-foreground">Dispositivo: {workOrder.deviceId}</p>
         </div>
         <div className="flex gap-3">
-          <ArchiveWorkOrderButton workOrderId={workOrder.id} workOrderNumber={workOrder.number} />
+          {workOrder.archivedAt ? null : (
+            <ArchiveWorkOrderButton workOrderId={workOrder.id} workOrderNumber={workOrder.number} />
+          )}
         </div>
       </div>
 
@@ -113,9 +117,11 @@ export default async function WorkOrderPage({ params }: WorkOrderPageProps) {
             </dl>
 
             <div className="flex gap-3 pt-2 border-t">
-              <Link href={`/work-orders/${workOrder.id}/edit`} className="rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-muted">
-                Editar orden
-              </Link>
+              {workOrder.archivedAt ? null : (
+                <Link href={`/work-orders/${workOrder.id}/edit`} className="rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-muted">
+                  Editar orden
+                </Link>
+              )}
               <Link href="/work-orders" className="rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-muted">
                 Volver a la lista
               </Link>

@@ -20,15 +20,15 @@ export default async function DevicesPage({ searchParams }: DevicesPageProps) {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-base leading-snug font-medium">Devices</h1>
+        <h1 className="text-base leading-snug font-medium">Dispositivos</h1>
         <Link href="/devices/new" className="rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-muted">
-          New device
+          Nuevo dispositivo
         </Link>
       </div>
 
       {result.status === "error" ? (
         <p role="alert" className="text-sm text-destructive">
-          Could not load devices: {result.error.message}
+          No se pudieron cargar los dispositivos: {result.error.message}
         </p>
       ) : (
         <DeviceList page={result.page} />

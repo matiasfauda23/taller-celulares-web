@@ -143,6 +143,7 @@ export interface WorkOrder {
   finalPrice: string | null;
   receivedAt: string;
   estimatedAt: string | null;
+  deliveredAt: string | null;
   notes: string | null;
   archivedAt: string | null;
   createdAt: string;

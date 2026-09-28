@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
-import { getClient } from "@/features/clients/api/clients";
 import { ClientForm } from "@/features/clients/components/client-form";
+import { getClient } from "@/features/clients/api/clients";
 import { getSessionForRender } from "@/lib/session/session";
 
 interface EditClientPageProps {
@@ -16,35 +16,33 @@ export default async function EditClientPage({ params }: EditClientPageProps) {
   const result = await getClient(session.record.accessToken, id);
 
   if (result.status === "error") {
+    if (result.error.statusCode === 404) {
+      redirect("/clients");
+    }
     return (
-      <p role="alert" className="text-sm text-destructive">
-        {result.error.statusCode === 404 ? "Client not found." : `Could not load this client: ${result.error.message}`}
-      </p>
+      <div className="flex flex-col gap-6">
+        <p role="alert" className="text-sm text-destructive">
+          Could not load client: {result.error.message}
+        </p>
+      </div>
     );
   }
 
   const client = result.client;
-  if (client.archivedAt) {
-    return <p className="text-sm text-muted-foreground">Archived clients cannot be edited.</p>;
-  }
 
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-base leading-snug font-medium">Edit client</h1>
       <Card>
         <CardContent className="pt-4">
-          <ClientForm
-            mode="edit"
-            clientId={client.id}
-            defaultValues={{
-              firstName: client.firstName,
-              lastName: client.lastName,
-              phone: client.phone,
-              email: client.email ?? "",
-              address: client.address,
-              notes: client.notes ?? "",
-            }}
-          />
+          <ClientForm mode="edit" clientId={client.id} defaultValues={{
+            firstName: client.firstName,
+            lastName: client.lastName,
+            phone: client.phone,
+            email: client.email ?? "",
+            address: client.address,
+            notes: client.notes ?? "",
+          }} />
         </CardContent>
       </Card>
     </div>

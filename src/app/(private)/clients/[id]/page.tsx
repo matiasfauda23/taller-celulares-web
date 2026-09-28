@@ -1,15 +1,15 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getClient } from "@/features/clients/api/clients";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArchiveClientButton } from "@/features/clients/components/archive-client-button";
+import { ClientFormWrapper } from "@/features/clients/components/client-form";
+import { getClient } from "@/features/clients/api/clients";
 import { getSessionForRender } from "@/lib/session/session";
 
-interface ClientDetailPageProps {
+interface ClientPageProps {
   params: Promise<{ id: string }>;
 }
 
-export default async function ClientDetailPage({ params }: ClientDetailPageProps) {
+export default async function ClientPage({ params }: ClientPageProps) {
   const session = await getSessionForRender();
   if (!session) redirect("/login");
 
@@ -17,68 +17,77 @@ export default async function ClientDetailPage({ params }: ClientDetailPageProps
   const result = await getClient(session.record.accessToken, id);
 
   if (result.status === "error") {
+    if (result.error.statusCode === 404) {
+      redirect("/clients");
+    }
     return (
-      <div className="flex flex-col gap-4">
-        <Link href="/clients" className="text-sm hover:underline">
-          ← Back to clients
-        </Link>
+      <div className="flex flex-col gap-6">
         <p role="alert" className="text-sm text-destructive">
-          {result.error.statusCode === 404 ? "Client not found." : `Could not load this client: ${result.error.message}`}
+          Could not load client: {result.error.message}
         </p>
       </div>
     );
   }
 
   const client = result.client;
-  const isArchived = Boolean(client.archivedAt);
 
   return (
     <div className="flex flex-col gap-6">
-      <Link href="/clients" className="text-sm hover:underline">
-        ← Back to clients
-      </Link>
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h1 className="text-base leading-snug font-medium">{client.firstName} {client.lastName}</h1>
+          <p className="text-sm text-muted-foreground">{client.phone}</p>
+        </div>
+        <ArchiveClientButton clientId={client.id} clientName={`${client.firstName} ${client.lastName}`} />
+      </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>
-            <h1 className="text-base leading-snug font-medium">
-              {client.firstName} {client.lastName}
-            </h1>
-          </CardTitle>
+          <CardTitle>Client details</CardTitle>
+          <CardDescription>Contact and address information</CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col gap-2 text-sm">
-          {isArchived ? <p className="text-muted-foreground">Archived</p> : null}
-          <p>
-            <span className="text-muted-foreground">Phone: </span>
-            {client.phone}
-          </p>
-          {client.email ? (
-            <p>
-              <span className="text-muted-foreground">Email: </span>
-              {client.email}
-            </p>
-          ) : null}
-          <p>
-            <span className="text-muted-foreground">Address: </span>
-            {client.address}
-          </p>
-          {client.notes ? (
-            <p>
-              <span className="text-muted-foreground">Notes: </span>
-              {client.notes}
-            </p>
-          ) : null}
+        <CardContent className="flex flex-col gap-4 pt-4">
+          <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+            <div>
+              <dt className="text-muted-foreground">Email</dt>
+              <dd>{client.email ?? "—"}</dd>
+            </div>
+            <div>
+              <dt className="text-muted-foreground">Address</dt>
+              <dd>{client.address}</dd>
+            </div>
+            {client.notes ? (
+              <div className="sm:col-span-2">
+                <dt className="text-muted-foreground">Notes</dt>
+                <dd>{client.notes}</dd>
+              </div>
+            ) : null}
+            <div>
+              <dt className="text-muted-foreground">Created</dt>
+              <dd>{new Date(client.createdAt).toLocaleString()}</dd>
+            </div>
+            <div>
+              <dt className="text-muted-foreground">Updated</dt>
+              <dd>{new Date(client.updatedAt).toLocaleString()}</dd>
+            </div>
+            {client.archivedAt ? (
+              <div className="sm:col-span-2">
+                <dt className="text-muted-foreground">Archived</dt>
+                <dd className="text-destructive">{new Date(client.archivedAt).toLocaleString()}</dd>
+              </div>
+            ) : null}
+          </dl>
+
+          <div className="flex gap-3 pt-2 border-t">
+            <a href={`/clients/${client.id}/edit`} className="rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-muted">
+              Edit client
+            </a>
+            <a href="/clients" className="rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-muted">
+              Back to list
+            </a>
+          </div>
         </CardContent>
       </Card>
-
-      {!isArchived ? (
-        <div className="flex flex-wrap items-center gap-3">
-          <Link href={`/clients/${client.id}/edit`} className="rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-muted">
-            Edit
-          </Link>
-          <ArchiveClientButton clientId={client.id} clientName={`${client.firstName} ${client.lastName}`} />
-        </div>
-      ) : null}
     </div>
   );
 }

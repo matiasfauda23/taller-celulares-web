@@ -8,16 +8,16 @@ export default function RegisterPage() {
       <Card>
         <CardHeader>
           <CardTitle>
-            <h1 className="text-base leading-snug font-medium">Register your workshop</h1>
+            <h1 className="text-base leading-snug font-medium">Registrar tu taller</h1>
           </CardTitle>
-          <CardDescription>Create an account for your repair shop.</CardDescription>
+          <CardDescription>Crea una cuenta para tu taller de reparación.</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           <RegisterForm />
           <p className="text-sm text-muted-foreground">
-            Already have an account?{" "}
+            ¿Ya tienes cuenta?{" "}
             <Link href="/login" className="underline">
-              Sign in
+              Iniciar sesión
             </Link>
           </p>
         </CardContent>

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
-import { WorkOrderFormWrapper } from "@/features/work-orders/components/work-order-form";
+import { WorkOrderFormWrapper } from "@/features/work-orders/components/work-order-form.server";
 import { getWorkOrder } from "@/features/work-orders/api/work-orders";
 import { getSessionForRender } from "@/lib/session/session";
 
@@ -22,7 +22,7 @@ export default async function EditWorkOrderPage({ params }: EditWorkOrderPagePro
     return (
       <div className="flex flex-col gap-6">
         <p role="alert" className="text-sm text-destructive">
-          Could not load work order: {result.error.message}
+          No se pudo cargar la orden: {result.error.message}
         </p>
       </div>
     );
@@ -32,7 +32,7 @@ export default async function EditWorkOrderPage({ params }: EditWorkOrderPagePro
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-base leading-snug font-medium">Edit work order</h1>
+      <h1 className="text-base leading-snug font-medium">Editar orden</h1>
       <Card>
         <CardContent className="pt-4">
           <WorkOrderFormWrapper

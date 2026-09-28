@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { listWorkOrders } from "@/features/work-orders/api/work-orders";
 import { WorkOrderList } from "@/features/work-orders/components/work-order-list";
 import { getSessionForRender } from "@/lib/session/session";
+import type { WorkOrderStatus } from "@/lib/api/types";
 
 interface WorkOrdersPageProps {
   searchParams: Promise<{ page?: string; status?: string; clientId?: string; deviceId?: string; from?: string; to?: string }>;
@@ -17,7 +18,7 @@ export default async function WorkOrdersPage({ searchParams }: WorkOrdersPagePro
 
   const result = await listWorkOrders(session.record.accessToken, {
     page,
-    status: status as any,
+    status: status as WorkOrderStatus | undefined,
     clientId,
     deviceId,
     from,
@@ -27,15 +28,15 @@ export default async function WorkOrdersPage({ searchParams }: WorkOrdersPagePro
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-base leading-snug font-medium">Work orders</h1>
+        <h1 className="text-base leading-snug font-medium">Órdenes de trabajo</h1>
         <Link href="/work-orders/new" className="rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-muted">
-          New work order
+          Nueva orden
         </Link>
       </div>
 
       {result.status === "error" ? (
         <p role="alert" className="text-sm text-destructive">
-          Could not load work orders: {result.error.message}
+          No se pudieron cargar las órdenes: {result.error.message}
         </p>
       ) : (
         <WorkOrderList page={result.page} />

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
-import { DeviceFormWrapper } from "@/features/devices/components/device-form";
+import { DeviceFormWrapper } from "@/features/devices/components/device-form.server";
 import { getDevice } from "@/features/devices/api/devices";
 import { getSessionForRender } from "@/lib/session/session";
 
@@ -22,7 +22,7 @@ export default async function EditDevicePage({ params }: EditDevicePageProps) {
     return (
       <div className="flex flex-col gap-6">
         <p role="alert" className="text-sm text-destructive">
-          Could not load device: {result.error.message}
+          No se pudo cargar el dispositivo: {result.error.message}
         </p>
       </div>
     );
@@ -32,7 +32,7 @@ export default async function EditDevicePage({ params }: EditDevicePageProps) {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-base leading-snug font-medium">Edit device</h1>
+      <h1 className="text-base leading-snug font-medium">Editar dispositivo</h1>
       <Card>
         <CardContent className="pt-4">
           <DeviceFormWrapper mode="edit" deviceId={device.id} defaultValues={{

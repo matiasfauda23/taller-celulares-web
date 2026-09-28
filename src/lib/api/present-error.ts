@@ -14,6 +14,7 @@ export function isValidationError(error: ApiErrorBody | null): boolean {
   return error?.code === "VALIDATION_ERROR" && Boolean(error.details?.length);
 }
 
-export function getFieldError(error: ApiErrorBody | null, field: string): string | undefined {
-  return error?.details?.find((d) => d.field === field)?.message;
+export function getFieldError(error: ApiErrorBody | null, field: string): { message?: string } | undefined {
+  const detail = error?.details?.find((d) => d.field === field);
+  return detail ? { message: detail.message } : undefined;
 }

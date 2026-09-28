@@ -16,51 +16,17 @@ import {
   type WorkOrderFormValues,
   type WorkOrderUpdateFormValues,
 } from "@/features/work-orders/schemas/work-order";
-import { listDevices } from "@/features/devices/api/devices";
-import { getSessionForRender } from "@/lib/session/session";
+import { ApiErrorAlert } from "@/components/shared/api-error-alert";
+import { getFieldError } from "@/lib/api/present-error";
+import type { ApiErrorBody } from "@/lib/api/types";
 
-interface WorkOrderFormProps {
-  mode: "create" | "edit";
-  workOrderId?: string;
-  defaultValues?: WorkOrderFormValues | WorkOrderUpdateFormValues;
-}
-
-async function getDeviceOptions(accessToken: string) {
-  const result = await listDevices(accessToken, { page: 1, limit: 100 });
-  if (result.status === "error") return [];
-  return result.page.data;
-}
-
-export async function WorkOrderFormWrapper({ mode, workOrderId, defaultValues }: WorkOrderFormProps) {
-  const session = await getSessionForRender();
-  const deviceOptions = session ? await getDeviceOptions(session.record.accessToken) : [];
-
-  if (mode === "create") {
-    return (
-      <WorkOrderFormCreateClient
-        mode={mode}
-        workOrderId={workOrderId}
-        defaultValues={defaultValues}
-        deviceOptions={deviceOptions}
-      />
-    );
-  } else {
-    return (
-      <WorkOrderFormEditClient
-        mode={mode}
-        workOrderId={workOrderId}
-        defaultValues={defaultValues}
-      />
-    );
-  }
-}
-
-function WorkOrderFormCreateClient({ mode, workOrderId, defaultValues, deviceOptions }: WorkOrderFormProps & { deviceOptions: { id: string; brand: string; model: string; serialNumber: string | null }[] }) {
+export function WorkOrderFormCreateClient({ mode, defaultValues, deviceOptions }: { mode: "create"; defaultValues?: WorkOrderFormValues; deviceOptions: { id: string; brand: string; model: string; serialNumber: string | null }[] }) {
   const router = useRouter();
-  const [formError, setFormError] = useState<string | null>(null);
+  const [apiError, setApiError] = useState<ApiErrorBody | null>(null);
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<WorkOrderFormValues>({
     resolver: zodResolver(workOrderSchema),
@@ -78,12 +44,18 @@ function WorkOrderFormCreateClient({ mode, workOrderId, defaultValues, deviceOpt
   });
 
   async function onSubmit(values: WorkOrderFormValues) {
-    setFormError(null);
+    setApiError(null);
     const input = toWorkOrderInput(values);
     const result = await createWorkOrder(input);
 
     if (result.status === "error") {
-      setFormError(result.error.message);
+      setApiError(result.error);
+
+      if (result.error.details) {
+        for (const detail of result.error.details) {
+          setError(detail.field as keyof WorkOrderFormValues, { type: "server", message: detail.message });
+        }
+      }
       return;
     }
 
@@ -93,73 +65,70 @@ function WorkOrderFormCreateClient({ mode, workOrderId, defaultValues, deviceOpt
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
+      <ApiErrorAlert error={apiError} />
       <FieldGroup>
         <Field data-invalid={Boolean(errors.deviceId)}>
-          <FieldLabel htmlFor="work-order-device-id">Device</FieldLabel>
+          <FieldLabel htmlFor="work-order-device-id">Dispositivo</FieldLabel>
           <select id="work-order-device-id" aria-invalid={Boolean(errors.deviceId)} {...register("deviceId")}>
-            <option value="">Select a device</option>
+            <option value="">Selecciona un dispositivo</option>
             {deviceOptions.map((device) => (
               <option key={device.id} value={device.id}>
                 {device.brand} {device.model} {device.serialNumber ? `(${device.serialNumber})` : ""}
               </option>
             ))}
           </select>
-          <FieldError errors={[errors.deviceId]} />
+          <FieldError errors={[errors.deviceId, getFieldError(apiError, "deviceId")]} />
         </Field>
         <Field data-invalid={Boolean(errors.reportedIssue)}>
-          <FieldLabel htmlFor="work-order-reported-issue">Reported issue</FieldLabel>
+          <FieldLabel htmlFor="work-order-reported-issue">Falla reportada</FieldLabel>
           <Input id="work-order-reported-issue" aria-invalid={Boolean(errors.reportedIssue)} {...register("reportedIssue")} />
-          <FieldError errors={[errors.reportedIssue]} />
+          <FieldError errors={[errors.reportedIssue, getFieldError(apiError, "reportedIssue")]} />
         </Field>
         <Field data-invalid={Boolean(errors.diagnosis)}>
-          <FieldLabel htmlFor="work-order-diagnosis">Diagnosis (optional)</FieldLabel>
+          <FieldLabel htmlFor="work-order-diagnosis">Diagnóstico (opcional)</FieldLabel>
           <Input id="work-order-diagnosis" aria-invalid={Boolean(errors.diagnosis)} {...register("diagnosis")} />
-          <FieldError errors={[errors.diagnosis]} />
+          <FieldError errors={[errors.diagnosis, getFieldError(apiError, "diagnosis")]} />
         </Field>
         <Field data-invalid={Boolean(errors.workPerformed)}>
-          <FieldLabel htmlFor="work-order-work-performed">Work performed (optional)</FieldLabel>
+          <FieldLabel htmlFor="work-order-work-performed">Trabajo realizado (opcional)</FieldLabel>
           <Input id="work-order-work-performed" aria-invalid={Boolean(errors.workPerformed)} {...register("workPerformed")} />
-          <FieldError errors={[errors.workPerformed]} />
+          <FieldError errors={[errors.workPerformed, getFieldError(apiError, "workPerformed")]} />
         </Field>
         <Field data-invalid={Boolean(errors.estimatedBudget)}>
-          <FieldLabel htmlFor="work-order-estimated-budget">Estimated budget (ARS, optional)</FieldLabel>
+          <FieldLabel htmlFor="work-order-estimated-budget">Presupuesto estimado (ARS, opcional)</FieldLabel>
           <Input id="work-order-estimated-budget" type="number" step="0.01" min="0" aria-invalid={Boolean(errors.estimatedBudget)} {...register("estimatedBudget")} />
-          <FieldError errors={[errors.estimatedBudget]} />
+          <FieldError errors={[errors.estimatedBudget, getFieldError(apiError, "estimatedBudget")]} />
         </Field>
         <Field data-invalid={Boolean(errors.finalPrice)}>
-          <FieldLabel htmlFor="work-order-final-price">Final price (ARS, optional)</FieldLabel>
+          <FieldLabel htmlFor="work-order-final-price">Precio final (ARS, opcional)</FieldLabel>
           <Input id="work-order-final-price" type="number" step="0.01" min="0" aria-invalid={Boolean(errors.finalPrice)} {...register("finalPrice")} />
-          <FieldError errors={[errors.finalPrice]} />
+          <FieldError errors={[errors.finalPrice, getFieldError(apiError, "finalPrice")]} />
         </Field>
         <Field data-invalid={Boolean(errors.estimatedAt)}>
-          <FieldLabel htmlFor="work-order-estimated-at">Estimated date (optional)</FieldLabel>
+          <FieldLabel htmlFor="work-order-estimated-at">Fecha estimada (opcional)</FieldLabel>
           <Input id="work-order-estimated-at" type="datetime-local" aria-invalid={Boolean(errors.estimatedAt)} {...register("estimatedAt")} />
-          <FieldError errors={[errors.estimatedAt]} />
+          <FieldError errors={[errors.estimatedAt, getFieldError(apiError, "estimatedAt")]} />
         </Field>
         <Field data-invalid={Boolean(errors.notes)}>
-          <FieldLabel htmlFor="work-order-notes">Notes (optional)</FieldLabel>
+          <FieldLabel htmlFor="work-order-notes">Notas (opcional)</FieldLabel>
           <Input id="work-order-notes" aria-invalid={Boolean(errors.notes)} {...register("notes")} />
-          <FieldError errors={[errors.notes]} />
+          <FieldError errors={[errors.notes, getFieldError(apiError, "notes")]} />
         </Field>
-        {formError ? (
-          <p role="alert" className="text-sm text-destructive">
-            {formError}
-          </p>
-        ) : null}
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Saving..." : mode === "create" ? "Create work order" : "Save changes"}
+          {isSubmitting ? "Guardando..." : mode === "create" ? "Crear orden" : "Guardar cambios"}
         </Button>
       </FieldGroup>
     </form>
   );
 }
 
-function WorkOrderFormEditClient({ mode, workOrderId, defaultValues }: WorkOrderFormProps) {
+export function WorkOrderFormEditClient({ mode, workOrderId, defaultValues }: { mode: "edit"; workOrderId: string; defaultValues?: WorkOrderUpdateFormValues }) {
   const router = useRouter();
-  const [formError, setFormError] = useState<string | null>(null);
+  const [apiError, setApiError] = useState<ApiErrorBody | null>(null);
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<WorkOrderUpdateFormValues>({
     resolver: zodResolver(workOrderUpdateSchema),
@@ -175,12 +144,18 @@ function WorkOrderFormEditClient({ mode, workOrderId, defaultValues }: WorkOrder
   });
 
   async function onSubmit(values: WorkOrderUpdateFormValues) {
-    setFormError(null);
+    setApiError(null);
     const input = toWorkOrderUpdateInput(values);
-    const result = await updateWorkOrder(workOrderId as string, input);
+    const result = await updateWorkOrder(workOrderId, input);
 
     if (result.status === "error") {
-      setFormError(result.error.message);
+      setApiError(result.error);
+
+      if (result.error.details) {
+        for (const detail of result.error.details) {
+          setError(detail.field as keyof WorkOrderUpdateFormValues, { type: "server", message: detail.message });
+        }
+      }
       return;
     }
 
@@ -190,49 +165,45 @@ function WorkOrderFormEditClient({ mode, workOrderId, defaultValues }: WorkOrder
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
+      <ApiErrorAlert error={apiError} />
       <FieldGroup>
         <Field data-invalid={Boolean(errors.reportedIssue)}>
-          <FieldLabel htmlFor="work-order-reported-issue">Reported issue</FieldLabel>
+          <FieldLabel htmlFor="work-order-reported-issue">Falla reportada</FieldLabel>
           <Input id="work-order-reported-issue" aria-invalid={Boolean(errors.reportedIssue)} {...register("reportedIssue")} />
-          <FieldError errors={[errors.reportedIssue]} />
+          <FieldError errors={[errors.reportedIssue, getFieldError(apiError, "reportedIssue")]} />
         </Field>
         <Field data-invalid={Boolean(errors.diagnosis)}>
-          <FieldLabel htmlFor="work-order-diagnosis">Diagnosis (optional)</FieldLabel>
+          <FieldLabel htmlFor="work-order-diagnosis">Diagnóstico (opcional)</FieldLabel>
           <Input id="work-order-diagnosis" aria-invalid={Boolean(errors.diagnosis)} {...register("diagnosis")} />
-          <FieldError errors={[errors.diagnosis]} />
+          <FieldError errors={[errors.diagnosis, getFieldError(apiError, "diagnosis")]} />
         </Field>
         <Field data-invalid={Boolean(errors.workPerformed)}>
-          <FieldLabel htmlFor="work-order-work-performed">Work performed (optional)</FieldLabel>
+          <FieldLabel htmlFor="work-order-work-performed">Trabajo realizado (opcional)</FieldLabel>
           <Input id="work-order-work-performed" aria-invalid={Boolean(errors.workPerformed)} {...register("workPerformed")} />
-          <FieldError errors={[errors.workPerformed]} />
+          <FieldError errors={[errors.workPerformed, getFieldError(apiError, "workPerformed")]} />
         </Field>
         <Field data-invalid={Boolean(errors.estimatedBudget)}>
-          <FieldLabel htmlFor="work-order-estimated-budget">Estimated budget (ARS, optional)</FieldLabel>
+          <FieldLabel htmlFor="work-order-estimated-budget">Presupuesto estimado (ARS, opcional)</FieldLabel>
           <Input id="work-order-estimated-budget" type="number" step="0.01" min="0" aria-invalid={Boolean(errors.estimatedBudget)} {...register("estimatedBudget")} />
-          <FieldError errors={[errors.estimatedBudget]} />
+          <FieldError errors={[errors.estimatedBudget, getFieldError(apiError, "estimatedBudget")]} />
         </Field>
         <Field data-invalid={Boolean(errors.finalPrice)}>
-          <FieldLabel htmlFor="work-order-final-price">Final price (ARS, optional)</FieldLabel>
+          <FieldLabel htmlFor="work-order-final-price">Precio final (ARS, opcional)</FieldLabel>
           <Input id="work-order-final-price" type="number" step="0.01" min="0" aria-invalid={Boolean(errors.finalPrice)} {...register("finalPrice")} />
-          <FieldError errors={[errors.finalPrice]} />
+          <FieldError errors={[errors.finalPrice, getFieldError(apiError, "finalPrice")]} />
         </Field>
         <Field data-invalid={Boolean(errors.estimatedAt)}>
-          <FieldLabel htmlFor="work-order-estimated-at">Estimated date (optional)</FieldLabel>
+          <FieldLabel htmlFor="work-order-estimated-at">Fecha estimada (opcional)</FieldLabel>
           <Input id="work-order-estimated-at" type="datetime-local" aria-invalid={Boolean(errors.estimatedAt)} {...register("estimatedAt")} />
-          <FieldError errors={[errors.estimatedAt]} />
+          <FieldError errors={[errors.estimatedAt, getFieldError(apiError, "estimatedAt")]} />
         </Field>
         <Field data-invalid={Boolean(errors.notes)}>
-          <FieldLabel htmlFor="work-order-notes">Notes (optional)</FieldLabel>
+          <FieldLabel htmlFor="work-order-notes">Notas (opcional)</FieldLabel>
           <Input id="work-order-notes" aria-invalid={Boolean(errors.notes)} {...register("notes")} />
-          <FieldError errors={[errors.notes]} />
+          <FieldError errors={[errors.notes, getFieldError(apiError, "notes")]} />
         </Field>
-        {formError ? (
-          <p role="alert" className="text-sm text-destructive">
-            {formError}
-          </p>
-        ) : null}
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Saving..." : mode === "create" ? "Create work order" : "Save changes"}
+          {isSubmitting ? "Guardando..." : "Guardar cambios"}
         </Button>
       </FieldGroup>
     </form>

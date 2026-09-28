@@ -23,16 +23,12 @@ async function parseClientResponse(response: Response, path: string): Promise<Cl
   return { status: "ok", client: body as Client };
 }
 
-/**
- * Client-side mutations, going through the same `/api/clients` BFF route the server-only
- * reads in `clients.ts` target on NestJS's side — this is the browser half, so it goes through
- * the BFF's session/CSRF/allowlist checks via a same-origin fetch instead of an internal call.
- */
 export async function createClient(input: CreateClientInput): Promise<ClientMutationResult> {
   const response = await fetch("/api/clients", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(input),
+    credentials: "include",
   });
   return parseClientResponse(response, "/api/clients");
 }
@@ -43,12 +39,13 @@ export async function updateClient(id: string, input: UpdateClientInput): Promis
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(input),
+    credentials: "include",
   });
   return parseClientResponse(response, path);
 }
 
 export async function archiveClient(id: string): Promise<ClientMutationResult> {
   const path = `/api/clients/${id}`;
-  const response = await fetch(path, { method: "DELETE" });
+  const response = await fetch(path, { method: "DELETE", credentials: "include" });
   return parseClientResponse(response, path);
 }

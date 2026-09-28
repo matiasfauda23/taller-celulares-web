@@ -28,6 +28,7 @@ export async function createDevice(input: CreateDeviceInput): Promise<DeviceMuta
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(input),
+    credentials: "include",
   });
   return parseDeviceResponse(response, "/api/devices");
 }
@@ -38,12 +39,13 @@ export async function updateDevice(id: string, input: UpdateDeviceInput): Promis
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(input),
+    credentials: "include",
   });
   return parseDeviceResponse(response, path);
 }
 
 export async function archiveDevice(id: string): Promise<DeviceMutationResult> {
   const path = `/api/devices/${id}`;
-  const response = await fetch(path, { method: "DELETE" });
+  const response = await fetch(path, { method: "DELETE", credentials: "include" });
   return parseDeviceResponse(response, path);
 }

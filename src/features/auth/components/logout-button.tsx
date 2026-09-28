@@ -11,7 +11,7 @@ export function LogoutButton() {
   async function handleLogout() {
     setPending(true);
     try {
-      await fetch("/api/session/logout", { method: "POST" });
+      await fetch("/api/session/logout", { method: "POST", credentials: "include" });
     } finally {
       router.push("/login");
       router.refresh();

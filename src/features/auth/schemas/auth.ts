@@ -1,24 +1,20 @@
 import { z } from "zod";
 
-// Field limits mirror LoginDto/RegisterDto in taller-celulares-api exactly (email trimmed and
-// lowercased, password length only enforced at register — login just checks presence, since
-// NestJS's own IsString is the authority there and a UX-side length limit would leak nothing
-// useful about a login attempt).
-const email = z.string().trim().toLowerCase().max(254, "Email must be at most 254 characters").email("Enter a valid email address");
+const email = z.string().trim().toLowerCase().max(254, "El email debe tener como máximo 254 caracteres").email("Ingresa un email válido");
 
 export const loginSchema = z.object({
   email,
-  password: z.string().min(1, "Password is required"),
+  password: z.string().min(1, "La contraseña es requerida"),
 });
 
 export type LoginFormValues = z.infer<typeof loginSchema>;
 
 export const registerSchema = z.object({
-  ownerName: z.string().trim().min(2, "Owner name must be at least 2 characters").max(100, "Owner name must be at most 100 characters"),
+  ownerName: z.string().trim().min(2, "El nombre debe tener al menos 2 caracteres").max(100, "El nombre debe tener como máximo 100 caracteres"),
   email,
-  password: z.string().min(12, "Password must be at least 12 characters").max(128, "Password must be at most 128 characters"),
-  workshopName: z.string().trim().min(2, "Workshop name must be at least 2 characters").max(120, "Workshop name must be at most 120 characters"),
-  workshopAddress: z.string().trim().min(5, "Workshop address must be at least 5 characters").max(200, "Workshop address must be at most 200 characters"),
+  password: z.string().min(12, "La contraseña debe tener al menos 12 caracteres").max(128, "La contraseña debe tener como máximo 128 caracteres"),
+  workshopName: z.string().trim().min(2, "El nombre del taller debe tener al menos 2 caracteres").max(120, "El nombre del taller debe tener como máximo 120 caracteres"),
+  workshopAddress: z.string().trim().min(5, "La dirección del taller debe tener al menos 5 caracteres").max(200, "La dirección del taller debe tener como máximo 200 caracteres"),
 });
 
 export type RegisterFormValues = z.infer<typeof registerSchema>;

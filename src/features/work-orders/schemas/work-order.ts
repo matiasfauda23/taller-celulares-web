@@ -1,16 +1,27 @@
 import { z } from "zod";
 import type { CreateWorkOrderInput, UpdateWorkOrderInput, UpdateWorkOrderStatusInput } from "@/lib/api/types";
 
+// Accepts datetime-local format (YYYY-MM-DDTHH:MM) and converts to ISO
+const datetimeLocalSchema = z.string().optional().refine(
+  (val) => !val || /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(val),
+  { message: "Formato de fecha inválido (use YYYY-MM-DDTHH:MM)" }
+).transform((val) => {
+  if (!val) return undefined;
+  // Convert datetime-local to ISO with seconds and local timezone
+  const date = new Date(val);
+  return date.toISOString();
+});
+
 export const workOrderSchema = z.object({
-  deviceId: z.string().uuid("Select a valid device"),
-  reportedIssue: z.string().trim().min(1, "Reported issue is required").max(2000, "Reported issue must be at most 2000 characters"),
-  diagnosis: z.string().trim().max(2000, "Diagnosis must be at most 2000 characters").optional(),
-  workPerformed: z.string().trim().max(2000, "Work performed must be at most 2000 characters").optional(),
-  estimatedBudget: z.coerce.number().min(0, "Estimated budget must be >= 0").max(99999999.99, "Estimated budget too large").optional(),
-  finalPrice: z.coerce.number().min(0, "Final price must be >= 0").max(99999999.99, "Final price too large").optional(),
-  receivedAt: z.string().datetime().optional(),
-  estimatedAt: z.string().datetime().optional(),
-  notes: z.string().trim().max(2000, "Notes must be at most 2000 characters").optional(),
+  deviceId: z.string().uuid("Selecciona un dispositivo válido"),
+  reportedIssue: z.string().trim().min(1, "La falla reportada es requerida").max(2000, "La falla reportada debe tener como máximo 2000 caracteres"),
+  diagnosis: z.string().trim().max(2000, "El diagnóstico debe tener como máximo 2000 caracteres").optional(),
+  workPerformed: z.string().trim().max(2000, "El trabajo realizado debe tener como máximo 2000 caracteres").optional(),
+  estimatedBudget: z.coerce.number().min(0, "El presupuesto estimado debe ser >= 0").max(99999999.99, "El presupuesto estimado es demasiado grande").optional().nullable(),
+  finalPrice: z.coerce.number().min(0, "El precio final debe ser >= 0").max(99999999.99, "El precio final es demasiado grande").optional().nullable(),
+  receivedAt: datetimeLocalSchema,
+  estimatedAt: datetimeLocalSchema,
+  notes: z.string().trim().max(2000, "Las notas deben tener como máximo 2000 caracteres").optional(),
 });
 
 export type WorkOrderFormValues = z.infer<typeof workOrderSchema>;
@@ -21,8 +32,8 @@ export function toWorkOrderInput(values: WorkOrderFormValues): CreateWorkOrderIn
     reportedIssue: values.reportedIssue,
     ...(values.diagnosis ? { diagnosis: values.diagnosis } : {}),
     ...(values.workPerformed ? { workPerformed: values.workPerformed } : {}),
-    ...(values.estimatedBudget !== undefined ? { estimatedBudget: values.estimatedBudget } : {}),
-    ...(values.finalPrice !== undefined ? { finalPrice: values.finalPrice } : {}),
+    ...(values.estimatedBudget !== undefined && values.estimatedBudget !== null ? { estimatedBudget: values.estimatedBudget } : {}),
+    ...(values.finalPrice !== undefined && values.finalPrice !== null ? { finalPrice: values.finalPrice } : {}),
     ...(values.receivedAt ? { receivedAt: values.receivedAt } : {}),
     ...(values.estimatedAt ? { estimatedAt: values.estimatedAt } : {}),
     ...(values.notes ? { notes: values.notes } : {}),
@@ -30,13 +41,13 @@ export function toWorkOrderInput(values: WorkOrderFormValues): CreateWorkOrderIn
 }
 
 export const workOrderUpdateSchema = z.object({
-  reportedIssue: z.string().trim().min(1, "Reported issue is required").max(2000, "Reported issue must be at most 2000 characters").optional(),
-  diagnosis: z.string().trim().max(2000, "Diagnosis must be at most 2000 characters").optional(),
-  workPerformed: z.string().trim().max(2000, "Work performed must be at most 2000 characters").optional(),
-  estimatedBudget: z.coerce.number().min(0, "Estimated budget must be >= 0").max(99999999.99, "Estimated budget too large").optional(),
-  finalPrice: z.coerce.number().min(0, "Final price must be >= 0").max(99999999.99, "Final price too large").optional(),
-  estimatedAt: z.string().datetime().optional(),
-  notes: z.string().trim().max(2000, "Notes must be at most 2000 characters").optional(),
+  reportedIssue: z.string().trim().min(1, "La falla reportada es requerida").max(2000, "La falla reportada debe tener como máximo 2000 caracteres").optional(),
+  diagnosis: z.string().trim().max(2000, "El diagnóstico debe tener como máximo 2000 caracteres").optional(),
+  workPerformed: z.string().trim().max(2000, "El trabajo realizado debe tener como máximo 2000 caracteres").optional(),
+  estimatedBudget: z.coerce.number().min(0, "El presupuesto estimado debe ser >= 0").max(99999999.99, "El presupuesto estimado es demasiado grande").optional().nullable(),
+  finalPrice: z.coerce.number().min(0, "El precio final debe ser >= 0").max(99999999.99, "El precio final es demasiado grande").optional().nullable(),
+  estimatedAt: datetimeLocalSchema,
+  notes: z.string().trim().max(2000, "Las notas deben tener como máximo 2000 caracteres").optional(),
 });
 
 export type WorkOrderUpdateFormValues = z.infer<typeof workOrderUpdateSchema>;
@@ -46,8 +57,8 @@ export function toWorkOrderUpdateInput(values: WorkOrderUpdateFormValues): Updat
     ...(values.reportedIssue !== undefined ? { reportedIssue: values.reportedIssue } : {}),
     ...(values.diagnosis ? { diagnosis: values.diagnosis } : {}),
     ...(values.workPerformed ? { workPerformed: values.workPerformed } : {}),
-    ...(values.estimatedBudget !== undefined ? { estimatedBudget: values.estimatedBudget } : {}),
-    ...(values.finalPrice !== undefined ? { finalPrice: values.finalPrice } : {}),
+    ...(values.estimatedBudget !== undefined && values.estimatedBudget !== null ? { estimatedBudget: values.estimatedBudget } : {}),
+    ...(values.finalPrice !== undefined && values.finalPrice !== null ? { finalPrice: values.finalPrice } : {}),
     ...(values.estimatedAt ? { estimatedAt: values.estimatedAt } : {}),
     ...(values.notes ? { notes: values.notes } : {}),
   };

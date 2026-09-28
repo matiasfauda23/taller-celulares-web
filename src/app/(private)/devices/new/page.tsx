@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { DeviceFormWrapper } from "@/features/devices/components/device-form";
+import { DeviceFormWrapper } from "@/features/devices/components/device-form.server";
 
 export default function NewDevicePage() {
   return (

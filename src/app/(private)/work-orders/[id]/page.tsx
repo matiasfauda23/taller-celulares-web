@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArchiveWorkOrderButton } from "@/features/work-orders/components/archive-work-order-button";
 import { StatusAction } from "@/features/work-orders/components/status-action";
-import { WorkOrderFormWrapper } from "@/features/work-orders/components/work-order-form";
 import { getWorkOrder } from "@/features/work-orders/api/work-orders";
 import { getSessionForRender } from "@/lib/session/session";
 
@@ -24,7 +24,7 @@ export default async function WorkOrderPage({ params }: WorkOrderPageProps) {
     return (
       <div className="flex flex-col gap-6">
         <p role="alert" className="text-sm text-destructive">
-          Could not load work order: {result.error.message}
+          No se pudo cargar la orden: {result.error.message}
         </p>
       </div>
     );
@@ -37,7 +37,7 @@ export default async function WorkOrderPage({ params }: WorkOrderPageProps) {
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-base leading-snug font-medium">{workOrder.number}</h1>
-          <p className="text-sm text-muted-foreground">Device: {workOrder.deviceId}</p>
+          <p className="text-sm text-muted-foreground">Dispositivo: {workOrder.deviceId}</p>
         </div>
         <div className="flex gap-3">
           <ArchiveWorkOrderButton workOrderId={workOrder.id} workOrderNumber={workOrder.number} />
@@ -47,78 +47,78 @@ export default async function WorkOrderPage({ params }: WorkOrderPageProps) {
       <div className="flex flex-col gap-4">
         <Card>
           <CardHeader>
-            <CardTitle>Work order details</CardTitle>
-            <CardDescription>Status, pricing, and timeline</CardDescription>
+            <CardTitle>Detalle de la orden</CardTitle>
+            <CardDescription>Estado, precios y cronología</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-4 pt-4">
             <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
               <div>
-                <dt className="text-muted-foreground">Status</dt>
+                <dt className="text-muted-foreground">Estado</dt>
                 <dd>
                   <StatusAction workOrderId={workOrder.id} currentStatus={workOrder.status} />
                 </dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">Reported issue</dt>
+                <dt className="text-muted-foreground">Falla reportada</dt>
                 <dd>{workOrder.reportedIssue}</dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">Diagnosis</dt>
+                <dt className="text-muted-foreground">Diagnóstico</dt>
                 <dd>{workOrder.diagnosis ?? "—"}</dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">Work performed</dt>
+                <dt className="text-muted-foreground">Trabajo realizado</dt>
                 <dd>{workOrder.workPerformed ?? "—"}</dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">Estimated budget (ARS)</dt>
+                <dt className="text-muted-foreground">Presupuesto estimado (ARS)</dt>
                 <dd>{workOrder.estimatedBudget ?? "—"}</dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">Final price (ARS)</dt>
+                <dt className="text-muted-foreground">Precio final (ARS)</dt>
                 <dd>{workOrder.finalPrice ?? "—"}</dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">Received at</dt>
-                <dd>{new Date(workOrder.receivedAt).toLocaleString()}</dd>
+                <dt className="text-muted-foreground">Recibido el</dt>
+                <dd>{new Date(workOrder.receivedAt).toLocaleString("es-AR")}</dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">Estimated date</dt>
-                <dd>{workOrder.estimatedAt ? new Date(workOrder.estimatedAt).toLocaleString() : "—"}</dd>
+                <dt className="text-muted-foreground">Fecha estimada</dt>
+                <dd>{workOrder.estimatedAt ? new Date(workOrder.estimatedAt).toLocaleString("es-AR") : "—"}</dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">Delivered at</dt>
-                <dd>{workOrder.deliveredAt ? new Date(workOrder.deliveredAt).toLocaleString() : "—"}</dd>
+                <dt className="text-muted-foreground">Entregado el</dt>
+                <dd>{workOrder.deliveredAt ? new Date(workOrder.deliveredAt).toLocaleString("es-AR") : "—"}</dd>
               </div>
               {workOrder.notes ? (
                 <div className="sm:col-span-2">
-                  <dt className="text-muted-foreground">Notes</dt>
+                  <dt className="text-muted-foreground">Notas</dt>
                   <dd>{workOrder.notes}</dd>
                 </div>
               ) : null}
               <div>
-                <dt className="text-muted-foreground">Created</dt>
-                <dd>{new Date(workOrder.createdAt).toLocaleString()}</dd>
+                <dt className="text-muted-foreground">Creado</dt>
+                <dd>{new Date(workOrder.createdAt).toLocaleString("es-AR")}</dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">Updated</dt>
-                <dd>{new Date(workOrder.updatedAt).toLocaleString()}</dd>
+                <dt className="text-muted-foreground">Actualizado</dt>
+                <dd>{new Date(workOrder.updatedAt).toLocaleString("es-AR")}</dd>
               </div>
               {workOrder.archivedAt ? (
                 <div className="sm:col-span-2">
-                  <dt className="text-muted-foreground">Archived</dt>
-                  <dd className="text-destructive">{new Date(workOrder.archivedAt).toLocaleString()}</dd>
+                  <dt className="text-muted-foreground">Archivado</dt>
+                  <dd className="text-destructive">{new Date(workOrder.archivedAt).toLocaleString("es-AR")}</dd>
                 </div>
               ) : null}
             </dl>
 
             <div className="flex gap-3 pt-2 border-t">
-              <a href={`/work-orders/${workOrder.id}/edit`} className="rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-muted">
-                Edit work order
-              </a>
-              <a href="/work-orders" className="rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-muted">
-                Back to list
-              </a>
+              <Link href={`/work-orders/${workOrder.id}/edit`} className="rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-muted">
+                Editar orden
+              </Link>
+              <Link href="/work-orders" className="rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-muted">
+                Volver a la lista
+              </Link>
             </div>
           </CardContent>
         </Card>

@@ -8,16 +8,16 @@ export default function LoginPage() {
       <Card>
         <CardHeader>
           <CardTitle>
-            <h1 className="text-base leading-snug font-medium">Sign in</h1>
+            <h1 className="text-base leading-snug font-medium">Iniciar sesión</h1>
           </CardTitle>
-          <CardDescription>Access your workshop.</CardDescription>
+          <CardDescription>Accede a tu taller.</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           <LoginForm />
           <p className="text-sm text-muted-foreground">
-            No account yet?{" "}
+            ¿No tienes cuenta?{" "}
             <Link href="/register" className="underline">
-              Register
+              Regístrate
             </Link>
           </p>
         </CardContent>

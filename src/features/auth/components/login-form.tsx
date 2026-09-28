@@ -24,11 +24,12 @@ export function LoginForm() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(values),
+      credentials: "include",
     });
 
     if (!response.ok) {
       const body: { message?: string } | null = await response.json().catch(() => null);
-      setFormError(body?.message ?? "Could not sign in. Please try again.");
+      setFormError(body?.message ?? "No se pudo iniciar sesión. Intenta de nuevo.");
       return;
     }
 
@@ -51,7 +52,7 @@ export function LoginForm() {
           <FieldError errors={[errors.email]} />
         </Field>
         <Field data-invalid={Boolean(errors.password)}>
-          <FieldLabel htmlFor="login-password">Password</FieldLabel>
+          <FieldLabel htmlFor="login-password">Contraseña</FieldLabel>
           <Input
             id="login-password"
             type="password"
@@ -67,7 +68,7 @@ export function LoginForm() {
           </p>
         ) : null}
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Signing in..." : "Sign in"}
+          {isSubmitting ? "Iniciando sesión..." : "Iniciar sesión"}
         </Button>
       </FieldGroup>
     </form>

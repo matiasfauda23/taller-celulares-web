@@ -28,6 +28,7 @@ export async function createWorkOrder(input: CreateWorkOrderInput): Promise<Work
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(input),
+    credentials: "include",
   });
   return parseWorkOrderResponse(response, "/api/work-orders");
 }
@@ -38,6 +39,7 @@ export async function updateWorkOrder(id: string, input: UpdateWorkOrderInput): 
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(input),
+    credentials: "include",
   });
   return parseWorkOrderResponse(response, path);
 }
@@ -48,12 +50,13 @@ export async function updateWorkOrderStatus(id: string, input: UpdateWorkOrderSt
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(input),
+    credentials: "include",
   });
   return parseWorkOrderResponse(response, path);
 }
 
 export async function archiveWorkOrder(id: string): Promise<WorkOrderMutationResult> {
   const path = `/api/work-orders/${id}`;
-  const response = await fetch(path, { method: "DELETE" });
+  const response = await fetch(path, { method: "DELETE", credentials: "include" });
   return parseWorkOrderResponse(response, path);
 }

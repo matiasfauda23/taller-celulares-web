@@ -31,7 +31,7 @@ interface ArchiveDialogProps {
  * other NestJS error) keeps the dialog open with the message NestJS returned — the record is
  * never removed from the list optimistically.
  */
-export function ArchiveDialog({ triggerLabel = "Archive", title, description, onConfirm }: ArchiveDialogProps) {
+export function ArchiveDialog({ triggerLabel = "Archivar", title, description, onConfirm }: ArchiveDialogProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
@@ -43,7 +43,7 @@ export function ArchiveDialog({ triggerLabel = "Archive", title, description, on
     setPending(false);
 
     if (outcome.status === "error") {
-      setError(outcome.message ?? "Could not archive this record.");
+      setError(outcome.message ?? "No se pudo archivar el registro.");
       return;
     }
 
@@ -74,10 +74,10 @@ export function ArchiveDialog({ triggerLabel = "Archive", title, description, on
         ) : null}
         <DialogFooter>
           <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={pending}>
-            Cancel
+            Cancelar
           </Button>
           <Button type="button" variant="destructive" onClick={handleConfirm} disabled={pending}>
-            {pending ? "Archiving..." : "Confirm archive"}
+            {pending ? "Archivando..." : "Confirmar archivado"}
           </Button>
         </DialogFooter>
       </DialogContent>

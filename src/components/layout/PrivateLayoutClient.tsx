@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -73,8 +73,8 @@ export function PrivateLayoutClient({ children, profile }: { children: React.Rea
       )}
 
       {/* Header + Sidebar - Desktop */}
-      <div className="hidden sm:flex gap-6">
-        <aside className="w-56 flex-shrink-0">
+      <div className="flex flex-col gap-6 sm:flex-row">
+        <aside className="hidden w-56 flex-shrink-0 sm:block">
           <Link href="/dashboard" className="block mb-6">
             <p className="text-sm font-medium">{profile?.workshop.name ?? "Taller"}</p>
             <p className="text-xs text-muted-foreground">{profile?.account.ownerName ?? ""}</p>
@@ -104,18 +104,25 @@ export function PrivateLayoutClient({ children, profile }: { children: React.Rea
           {children}
         </main>
       </div>
-
-      {/* Fallback for mobile when JS not loaded */}
-      <div className="sm:hidden">
-        {children}
-      </div>
     </div>
   );
 }
 
 function LogoutButtonMobile({ onClick }: { onClick?: () => void }) {
+  const router = useRouter();
+
   return (
-    <form action="/api/session/logout" onSubmit={(e) => { e.preventDefault(); onClick?.(); fetch("/api/session/logout", { method: "POST", credentials: "include" }); }}>
+    <form
+      action="/api/session/logout"
+      onSubmit={async (e) => {
+        e.preventDefault();
+        onClick?.();
+        // Awaited: navigating before the BFF confirms the teardown leaves the session
+        // alive, so the next protected navigation would still render as signed in.
+        await fetch("/api/session/logout", { method: "POST", credentials: "include" });
+        router.push("/login");
+      }}
+    >
       <button type="submit" className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
         Cerrar sesión
       </button>
@@ -124,8 +131,20 @@ function LogoutButtonMobile({ onClick }: { onClick?: () => void }) {
 }
 
 function LogoutButtonDesktop({ className }: { className?: string }) {
+  const router = useRouter();
+
   return (
-    <form action="/api/session/logout" className={className}>
+    <form
+      action="/api/session/logout"
+      className={className}
+      onSubmit={async (e) => {
+        e.preventDefault();
+        // Awaited: navigating before the BFF confirms the teardown leaves the session
+        // alive, so the next protected navigation would still render as signed in.
+        await fetch("/api/session/logout", { method: "POST", credentials: "include" });
+        router.push("/login");
+      }}
+    >
       <button type="submit" className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
         Cerrar sesión
       </button>

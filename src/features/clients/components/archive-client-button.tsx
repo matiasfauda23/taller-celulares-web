@@ -11,8 +11,8 @@ interface ArchiveClientButtonProps {
 export function ArchiveClientButton({ clientId, clientName }: ArchiveClientButtonProps) {
   return (
     <ArchiveDialog
-      title={`Archive ${clientName}?`}
-      description="This client will no longer appear in the active list. This cannot be undone from here."
+      title={`¿Archivar a ${clientName}?`}
+      description="Este cliente dejará de aparecer en la lista de clientes activos. No se puede deshacer desde aquí."
       onConfirm={async () => {
         const result = await archiveClient(clientId);
         return result.status === "ok" ? { status: "ok" } : { status: "error", message: result.error.message };

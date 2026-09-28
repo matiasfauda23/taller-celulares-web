@@ -17,14 +17,16 @@ export default async function ClientPage({ params }: ClientPageProps) {
   const result = await getClient(session.record.accessToken, id);
 
   if (result.status === "error") {
-    if (result.error.statusCode === 404) {
-      redirect("/clients");
-    }
     return (
       <div className="flex flex-col gap-6">
         <p role="alert" className="text-sm text-destructive">
-          No se pudo cargar el cliente: {result.error.message}
+          {result.error.statusCode === 404
+            ? "No se encontró el cliente."
+            : `No se pudo cargar el cliente: ${result.error.message}`}
         </p>
+        <Link href="/clients" className="w-fit rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-muted">
+          Volver a la lista
+        </Link>
       </div>
     );
   }
@@ -38,7 +40,9 @@ export default async function ClientPage({ params }: ClientPageProps) {
           <h1 className="text-base leading-snug font-medium">{client.firstName} {client.lastName}</h1>
           <p className="text-sm text-muted-foreground">{client.phone}</p>
         </div>
-        <ArchiveClientButton clientId={client.id} clientName={`${client.firstName} ${client.lastName}`} />
+        {client.archivedAt ? null : (
+          <ArchiveClientButton clientId={client.id} clientName={`${client.firstName} ${client.lastName}`} />
+        )}
       </div>
 
       <Card>
@@ -79,9 +83,11 @@ export default async function ClientPage({ params }: ClientPageProps) {
           </dl>
 
           <div className="flex gap-3 pt-2 border-t">
-            <Link href={`/clients/${client.id}/edit`} className="rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-muted">
-              Editar cliente
-            </Link>
+            {client.archivedAt ? null : (
+              <Link href={`/clients/${client.id}/edit`} className="rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-muted">
+                Editar cliente
+              </Link>
+            )}
             <Link href="/clients" className="rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-muted">
               Volver a la lista
             </Link>

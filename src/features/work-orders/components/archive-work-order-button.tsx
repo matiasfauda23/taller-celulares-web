@@ -11,8 +11,8 @@ interface ArchiveWorkOrderButtonProps {
 export function ArchiveWorkOrderButton({ workOrderId, workOrderNumber }: ArchiveWorkOrderButtonProps) {
   return (
     <ArchiveDialog
-      title={`Archive ${workOrderNumber}?`}
-      description="This work order will no longer appear in the active list. This cannot be undone from here."
+      title={`¿Archivar ${workOrderNumber}?`}
+      description="Esta orden dejará de aparecer en la lista de órdenes activas. No se puede deshacer desde aquí."
       onConfirm={async () => {
         const result = await archiveWorkOrder(workOrderId);
         return result.status === "ok" ? { status: "ok" } : { status: "error", message: result.error.message };

@@ -24,9 +24,13 @@ export const workOrderSchema = z.object({
   notes: z.string().trim().max(2000, "Las notas deben tener como máximo 2000 caracteres").optional(),
 });
 
-export type WorkOrderFormValues = z.infer<typeof workOrderSchema>;
+// The form holds the schema *input* (raw `datetime-local` strings), while submission receives the
+// schema *output* (ISO strings produced by the transform). Keeping both types distinct is what lets
+// zodResolver type-check against useForm's field values.
+export type WorkOrderFormValues = z.input<typeof workOrderSchema>;
+export type WorkOrderFormParsed = z.output<typeof workOrderSchema>;
 
-export function toWorkOrderInput(values: WorkOrderFormValues): CreateWorkOrderInput {
+export function toWorkOrderInput(values: WorkOrderFormParsed): CreateWorkOrderInput {
   return {
     deviceId: values.deviceId,
     reportedIssue: values.reportedIssue,
@@ -50,9 +54,10 @@ export const workOrderUpdateSchema = z.object({
   notes: z.string().trim().max(2000, "Las notas deben tener como máximo 2000 caracteres").optional(),
 });
 
-export type WorkOrderUpdateFormValues = z.infer<typeof workOrderUpdateSchema>;
+export type WorkOrderUpdateFormValues = z.input<typeof workOrderUpdateSchema>;
+export type WorkOrderUpdateFormParsed = z.output<typeof workOrderUpdateSchema>;
 
-export function toWorkOrderUpdateInput(values: WorkOrderUpdateFormValues): UpdateWorkOrderInput {
+export function toWorkOrderUpdateInput(values: WorkOrderUpdateFormParsed): UpdateWorkOrderInput {
   return {
     ...(values.reportedIssue !== undefined ? { reportedIssue: values.reportedIssue } : {}),
     ...(values.diagnosis ? { diagnosis: values.diagnosis } : {}),

@@ -11,8 +11,8 @@ interface ArchiveDeviceButtonProps {
 export function ArchiveDeviceButton({ deviceId, deviceName }: ArchiveDeviceButtonProps) {
   return (
     <ArchiveDialog
-      title={`Archive ${deviceName}?`}
-      description="This device will no longer appear in the active list. This cannot be undone from here."
+      title={`¿Archivar ${deviceName}?`}
+      description="Este dispositivo dejará de aparecer en la lista de dispositivos activos. No se puede deshacer desde aquí."
       onConfirm={async () => {
         const result = await archiveDevice(deviceId);
         return result.status === "ok" ? { status: "ok" } : { status: "error", message: result.error.message };

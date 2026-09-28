@@ -15,6 +15,12 @@ const credentials = {
   workshopAddress: "Av Siempre Viva 123",
 };
 
+// The tests below share one registered account, so they must share one module instance and
+// therefore one `credentials.email`. Without serial mode a failure makes Playwright discard
+// the worker, re-evaluating this module with a fresh UUID and failing every later test with
+// "Invalid credentials" instead of the real cause.
+test.describe.configure({ mode: "serial" });
+
 test("redirects an unauthenticated visitor away from a protected route", async ({ page }) => {
   await page.goto("/dashboard");
   await expect(page).toHaveURL(/\/login$/);
@@ -26,12 +32,12 @@ test("registers against the real API, stores no tokens in the browser, survives 
 }) => {
   test.setTimeout(60_000); // the 25s expiry wait below alone exceeds the default 30s test timeout
   await page.goto("/register");
-  await page.getByLabel("Owner name").fill(credentials.ownerName);
+  await page.getByLabel("Tu nombre").fill(credentials.ownerName);
   await page.getByLabel("Email").fill(credentials.email);
-  await page.getByLabel("Password").fill(credentials.password);
-  await page.getByLabel("Workshop name").fill(credentials.workshopName);
-  await page.getByLabel("Workshop address").fill(credentials.workshopAddress);
-  await page.getByRole("button", { name: "Create account" }).click();
+  await page.getByLabel("Contraseña").fill(credentials.password);
+  await page.getByLabel("Nombre del taller").fill(credentials.workshopName);
+  await page.getByLabel("Dirección del taller").fill(credentials.workshopAddress);
+  await page.getByRole("button", { name: "Crear cuenta" }).click();
 
   await expect(page).toHaveURL(/\/dashboard$/);
   await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
@@ -61,7 +67,7 @@ test("registers against the real API, stores no tokens in the browser, survives 
   await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
   await expect(page).toHaveURL(/\/dashboard$/);
 
-  await page.getByRole("button", { name: "Sign out" }).click();
+  await page.getByRole("button", { name: "Cerrar sesión" }).click();
   await expect(page).toHaveURL(/\/login$/);
 
   await page.goto("/dashboard");
@@ -71,8 +77,8 @@ test("registers against the real API, stores no tokens in the browser, survives 
 test("logs back in against the real API with the already-registered credentials", async ({ page }) => {
   await page.goto("/login");
   await page.getByLabel("Email").fill(credentials.email);
-  await page.getByLabel("Password").fill(credentials.password);
-  await page.getByRole("button", { name: "Sign in" }).click();
+  await page.getByLabel("Contraseña").fill(credentials.password);
+  await page.getByRole("button", { name: "Iniciar sesión" }).click();
 
   await expect(page).toHaveURL(/\/dashboard$/);
   await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
@@ -81,10 +87,11 @@ test("logs back in against the real API with the already-registered credentials"
 test("shows a recoverable error and stays on the login page for invalid credentials", async ({ page }) => {
   await page.goto("/login");
   await page.getByLabel("Email").fill(`nobody-${randomUUID()}@example.com`);
-  await page.getByLabel("Password").fill("wrong-password-value");
-  await page.getByRole("button", { name: "Sign in" }).click();
+  await page.getByLabel("Contraseña").fill("wrong-password-value");
+  await page.getByRole("button", { name: "Iniciar sesión" }).click();
 
-  await expect(page.getByRole("alert")).toBeVisible();
+  // Scoped to the form: Next.js also renders a role="alert" route announcer in <body>.
+  await expect(page.locator("form [role='alert']")).toBeVisible();
   await expect(page).toHaveURL(/\/login$/);
 });
 
@@ -93,8 +100,8 @@ test("ends the session when NestJS rejects an already-rotated refresh token", as
   // a fresh, real, Redis-backed BFF session.
   await page.goto("/login");
   await page.getByLabel("Email").fill(credentials.email);
-  await page.getByLabel("Password").fill(credentials.password);
-  await page.getByRole("button", { name: "Sign in" }).click();
+  await page.getByLabel("Contraseña").fill(credentials.password);
+  await page.getByRole("button", { name: "Iniciar sesión" }).click();
   await expect(page).toHaveURL(/\/dashboard$/);
 
   const cookies = await context.cookies();
@@ -122,7 +129,7 @@ test("ends the session when NestJS rejects an already-rotated refresh token", as
     await redis.hset(key, "accessExpiresAt", String(Date.now() - 1));
 
     const response = await page.request.post("/api/session/refresh", {
-      headers: { origin: "http://127.0.0.1:3101" },
+      headers: { origin: "http://localhost:3001" },
     });
     expect(response.status()).toBe(401);
     expect(await redis.exists(key)).toBe(0);

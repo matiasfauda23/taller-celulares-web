@@ -36,8 +36,8 @@ export function RegisterForm() {
       return;
     }
 
-    router.push("/dashboard");
-    router.refresh();
+    // router.push alone: a refresh() issued right after cancels the in-flight navigation.
+    await router.push("/dashboard");
   }
 
   return (

@@ -14,7 +14,9 @@ import {
   workOrderUpdateSchema,
   toWorkOrderUpdateInput,
   type WorkOrderFormValues,
+  type WorkOrderFormParsed,
   type WorkOrderUpdateFormValues,
+  type WorkOrderUpdateFormParsed,
 } from "@/features/work-orders/schemas/work-order";
 import { ApiErrorAlert } from "@/components/shared/api-error-alert";
 import { getFieldError } from "@/lib/api/present-error";
@@ -28,7 +30,7 @@ export function WorkOrderFormCreateClient({ mode, defaultValues, deviceOptions }
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm<WorkOrderFormValues>({
+  } = useForm<WorkOrderFormValues, unknown, WorkOrderFormParsed>({
     resolver: zodResolver(workOrderSchema),
     defaultValues: defaultValues ?? {
       deviceId: "",
@@ -43,7 +45,7 @@ export function WorkOrderFormCreateClient({ mode, defaultValues, deviceOptions }
     },
   });
 
-  async function onSubmit(values: WorkOrderFormValues) {
+  async function onSubmit(values: WorkOrderFormParsed) {
     setApiError(null);
     const input = toWorkOrderInput(values);
     const result = await createWorkOrder(input);
@@ -59,8 +61,7 @@ export function WorkOrderFormCreateClient({ mode, defaultValues, deviceOptions }
       return;
     }
 
-    router.push(`/work-orders/${result.workOrder.id}`);
-    router.refresh();
+    await router.push(`/work-orders/${result.workOrder.id}`);
   }
 
   return (
@@ -130,7 +131,7 @@ export function WorkOrderFormEditClient({ mode, workOrderId, defaultValues }: { 
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm<WorkOrderUpdateFormValues>({
+  } = useForm<WorkOrderUpdateFormValues, unknown, WorkOrderUpdateFormParsed>({
     resolver: zodResolver(workOrderUpdateSchema),
     defaultValues: defaultValues ?? {
       reportedIssue: "",
@@ -143,7 +144,7 @@ export function WorkOrderFormEditClient({ mode, workOrderId, defaultValues }: { 
     },
   });
 
-  async function onSubmit(values: WorkOrderUpdateFormValues) {
+  async function onSubmit(values: WorkOrderUpdateFormParsed) {
     setApiError(null);
     const input = toWorkOrderUpdateInput(values);
     const result = await updateWorkOrder(workOrderId, input);
@@ -159,8 +160,7 @@ export function WorkOrderFormEditClient({ mode, workOrderId, defaultValues }: { 
       return;
     }
 
-    router.push(`/work-orders/${result.workOrder.id}`);
-    router.refresh();
+    await router.push(`/work-orders/${result.workOrder.id}`);
   }
 
   return (

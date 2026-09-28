@@ -13,8 +13,7 @@ export function LogoutButton() {
     try {
       await fetch("/api/session/logout", { method: "POST", credentials: "include" });
     } finally {
-      router.push("/login");
-      router.refresh();
+      await router.push("/login");
     }
   }
 

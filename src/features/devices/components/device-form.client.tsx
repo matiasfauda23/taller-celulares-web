@@ -49,8 +49,7 @@ export function DeviceFormClient({ mode, deviceId, defaultValues, clientOptions 
       return;
     }
 
-    router.push(`/devices/${result.device.id}`);
-    router.refresh();
+    await router.push(`/devices/${result.device.id}`);
   }
 
   return (

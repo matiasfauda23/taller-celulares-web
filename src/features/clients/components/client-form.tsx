@@ -48,8 +48,7 @@ export function ClientForm({ mode, clientId, defaultValues }: ClientFormProps) {
       return;
     }
 
-    router.push(`/clients/${result.client.id}`);
-    router.refresh();
+    await router.push(`/clients/${result.client.id}`);
   }
 
   return (
